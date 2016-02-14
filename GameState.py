@@ -1,5 +1,6 @@
-from HexTile import HexTile
-from ShuffleBag import ShuffleBag
+from tile import Tile
+from shuffleBag import ShuffleBag
+from point import Point
 
 #anything in this file can still be refactored and shufled around. Just
 #trying to sort things out
@@ -27,18 +28,7 @@ class GameState:
         self.peices = otherGameState.peices
         self.turn = otherGameState.turn
 
-    def HexAdjacent(self, x1, y1, x2, y2):
-        dx = x1 - x2
-        dy = y1 - y2
-
-        if dx == 0 and abs(dy) == 1:
-            return true
-        if dy == 0 and abs(dx) == 1:
-            return true
-        if abs(dx) == 1 and dy == -dx:
-            return true
-
-        return false
+  
 
 #Returns a GameState representing a brand-new game
 #also providing example of what member data is supposed to look like
@@ -70,7 +60,11 @@ def NewGame():
             if (x+y) > 6 or (x+y) < 2: #then these indices are off the board
                 spaces[x,y] = -1
             else:
-                spaces[x,y] = HexTile(tileBag.next(), numberTokenBag.next())
+                #TODO: Enforce the rule about red numbers not being next
+                #to each other. Will probably require adding functionality
+                #to ShuffleBag
+                #And not put tile in Desert. And put Robber there
+                spaces[x,y] = Tile(tileBag.next(), numberTokenBag.next())
 
     return GameState(spaces, players, peices, turn)
 
@@ -79,3 +73,4 @@ def NewGame():
     
 
     #TODO: incomplete function
+

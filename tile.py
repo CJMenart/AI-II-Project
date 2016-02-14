@@ -1,4 +1,5 @@
 from enum import Enum
+from Point import Point
 
 class TileType(Enum):
     PASTURE = 1
@@ -8,7 +9,8 @@ class TileType(Enum):
     FIELDS = 5
     DESERT = 6
 
-class HexTile:
+class Tile:
     def __init__(self, tileType, dieNumber):
         self.tileType = tileType
         self.dieNumber = dieNumber
+
