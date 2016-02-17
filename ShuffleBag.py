@@ -10,6 +10,9 @@ class ShuffleBag(object):
         if (self.list is None) or (len(self.list) == 0):
             self.shuffle()
         return self.list.pop()
+    def putBack(self, value):
+        self.list.append(value)
+        random.shuffle(self.list)
     def shuffle(self):
         self.list = self.values[:]
         random.shuffle(self.list)

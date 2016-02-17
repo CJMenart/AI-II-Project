@@ -9,18 +9,19 @@ class GameState:
     #Tentative data members:
     #spaces: grid keeping track of hex types/numbers
     #players: list of structures with info like hands, color, etc.
-    #peices: list of wooden peices like settlements, roads, roobers, with
+    #peices: list of wooden peices like settlements, roads, with
     #       their positions
     #Turn: info specifying at what point in time of gameplay we're at.
     
     #Two constructors: a copy constructor and one that passes in all data
     #variables individually
 
-    def __init__(self, spaces, players, peices, turn):
+    def __init__(self, spaces, players, peices, robberPos, turn):
         self.spaces = spaces
         self.players = players
         self.peices = peices
         self.turn = turn
+        self.robberPos;
 
     def __init__(self, otherGameState):
         self.spaces = otherGameState.spaces
@@ -64,9 +65,14 @@ def NewGame():
                 #to each other. Will probably require adding functionality
                 #to ShuffleBag
                 #And not put tile in Desert. And put Robber there
-                spaces[x,y] = Tile(tileBag.next(), numberTokenBag.next())
+                tile = tileBag.next();
+                if tile == TileType.DESERT:
+                    robberPos = Point(x,y)
+                    spaces[x,y] = Tile(tile, -1)
+                else:
+                    spaces[x,y] = Tile(tile, numberTokenBag.next())
 
-    return GameState(spaces, players, peices, turn)
+    return GameState(spaces, players, peices, robberPos, turn)
 
     #some stuff...and then
 
