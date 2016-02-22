@@ -23,4 +23,4 @@ def SettlementAdjacent(s1, s2):
     if (s1.adjHex3 == s2.adjHex3):
         adjacencies += 1
     
-    return adjacencies == 2
+    return adjacencies >= 2
