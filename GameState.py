@@ -64,6 +64,9 @@ def NewGame():
                 #TODO: Enforce the rule about red numbers not being next
                 #to each other. Is actually a very complex problem
                 #and we may not care enough to deal with it
+                #We could even do the 'standard' setup version where
+                #both numbers and tiles are in fixed position.
+                #Might generate a slightly wonkier heuristic tho?
                 tile = tileBag.next();
                 if tile == TileType.DESERT:
                     robberPos = Point(x,y)
@@ -71,9 +74,19 @@ def NewGame():
                 else:
                     spaces[x,y] = Tile(tile, numberTokenBag.next())
 
+    #Game begins with no roads or settlements in play
+    peices = []
+
+    #initialize players...and then
+
+
+    #construct the turn data with a randomly-selected player
+    turn = Turn(TurnState.INITIAL_PLACEMENT, randPlayer)
+
+    
+    
     return GameState(spaces, players, peices, robberPos, turn)
 
-    #some stuff...and then
 
     
 
