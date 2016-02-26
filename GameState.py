@@ -62,9 +62,8 @@ def NewGame():
                 spaces[x,y] = -1
             else:
                 #TODO: Enforce the rule about red numbers not being next
-                #to each other. Will probably require adding functionality
-                #to ShuffleBag
-                #And not put tile in Desert. And put Robber there
+                #to each other. Is actually a very complex problem
+                #and we may not care enough to deal with it
                 tile = tileBag.next();
                 if tile == TileType.DESERT:
                     robberPos = Point(x,y)
