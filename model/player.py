@@ -10,9 +10,11 @@ class ResourceType(Enum):
     GRAIN = 5
 
 class Player:
-    def __init__(self, inputPlayerId):
+    def __init__(self, inputPlayerId, resources):
         self.playerId = inputPlayerId
-        self.resources = {ResourceType.WOOL: 0 , ResourceType.BRICK:0, ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}
+        self.resources = resources
+        #below: what a basic player with an empty hand looks like
+        #self.resources = {ResourceType.WOOL: 0 , ResourceType.BRICK:0, ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}
 
     def addResource(self, resourceType, nResource):
         self.resources[resourceType] += nResource
@@ -51,7 +53,6 @@ class Player:
         return None
     
     # get a lsit of available settlements that the player could build
-
 
     # build a road that belongs to the player, update gameState
     def buildRoad(self, hex1, hex2, gameState):

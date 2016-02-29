@@ -2,6 +2,7 @@ from tile import Tile
 from ShuffleBag import ShuffleBag
 from point import Point
 from turn import Turn
+import copy
 
 #anything in this file can still be refactored and shufled around. Just
 #trying to sort things out
@@ -24,16 +25,6 @@ class GameState:
         self.settlements = settlements
         self.turn = turn
         self.robberPos = robberPos;
-
-# the second __init__ can overwrite the first init
-'''
-    def __init__(self, otherGameState):
-        self.spaces = list(otherGameState.spaces) #deep enough. We don't change these
-        self.players = list(otherGameState.players) #need deeper copy?
-        self.peices = list(otherGameState.peices) #need deeper copy? We may modify settlements...
-        self.turn = Turn(otherGameState.turn) #deep enough
-
-'''
   
         #gets child nodes on down the H-Minimax graph
     def getPossibleNextStates(self):
@@ -54,15 +45,15 @@ class GameState:
                                 if settlement not in self.pieces:
                                     #do we also need to make a deep copy of 'settlement'?
                                     #in theory, we're never going to modify it...
-                                    state1 = self.Copy()
+                                    state1 = copy.deepcopy(self)
                                     state1.peices.append(settlement, Road(basePoint, point2))
                                     newStates.append(state1)
 
-                                    state2 = self.Copy()
+                                    state2 = copy.deepcopy(self)
                                     state2.peices.append(settlement, Road(basePoint, point3))
                                     newStates.append(state2)
 
-                                    state3 = self.Copy()
+                                    state3 = copy.deepcopy(self)
                                     state3.peices.append(settlement, Road(point2, point3))
                                     newStates.append(state1)
 
@@ -116,12 +107,12 @@ def NewGame():
     peices = []
 
     #initialize players...and then
-
+    players = []
+    for player in range(0,3):
+        players.append(Player(player, {ResourceType.WOOL:0, ResourceType.BRICK:0, ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}))
 
     #construct the turn data with a randomly-selected player
-    turn = Turn(TurnState.INITIAL_PLACEMENT, randPlayer)
-
-    
+    turn = Turn(TurnState.INITIAL_PLACEMENT, players[0])
     
     return GameState(spaces, players, peices, robberPos, turn)
 
