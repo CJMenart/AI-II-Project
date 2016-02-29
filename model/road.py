@@ -1,9 +1,14 @@
 from point import *
 
 class Road:
-    def __init__(self, adjHex1, adjHex2):
+    def __init__(self, adjHex1, adjHex2, playerId):
         self.adjHex1 = adjHex1
         self.adjHex2 = adjHex2
+        self.playerId = playerId
+        
+    def __eq__(self, other):
+        return (self.adjHex1 == other.adjHex1 and self.adjHex2 == other.adjHex2 and \
+                    self.playerId == other.playerId)
 
     def isOnBoard(self):
         return self.adjHex1.isOnBoard() OR \

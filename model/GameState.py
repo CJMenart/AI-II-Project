@@ -1,5 +1,5 @@
 from tile import Tile
-from shuffleBag import ShuffleBag
+from ShuffleBag import ShuffleBag
 from point import Point
 from turn import Turn
 
@@ -17,20 +17,25 @@ class GameState:
     #Two constructors: a copy constructor and one that passes in all data
     #variables individually
 
-    def __init__(self, spaces, players, peices, robberPos, turn):
+    def __init__(self, spaces, players, roads, settlements, robberPos, turn):
         self.spaces = spaces
         self.players = players
-        self.peices = peices
+        self.roads = roads
+        self.settlements = settlements
         self.turn = turn
-        self.robberPos;
+        self.robberPos = robberPos;
 
+# the second __init__ can overwrite the first init
+'''
     def __init__(self, otherGameState):
         self.spaces = list(otherGameState.spaces) #deep enough. We don't change these
         self.players = list(otherGameState.players) #need deeper copy?
         self.peices = list(otherGameState.peices) #need deeper copy? We may modify settlements...
         self.turn = Turn(otherGameState.turn) #deep enough
 
-    #gets child nodes on down the H-Minimax graph
+'''
+  
+        #gets child nodes on down the H-Minimax graph
     def getPossibleNextStates(self):
         newStates = []
         
@@ -62,7 +67,8 @@ class GameState:
                                     newStates.append(state1)
 
         return newStates
-    
+
+
 #Returns a GameState representing a brand-new game
 #also providing example of what member data is supposed to look like
 def NewGame():
@@ -91,7 +97,7 @@ def NewGame():
     for x in range(0,4):
         for y in range(0,4):
             if not Point(x,y).isOnBoard(): #then these indices are off the board
-                spaces[x][y] = -1
+                spaces[x,y] = -1
             else:
                 #TODO: Enforce the rule about red numbers not being next
                 #to each other. Is actually a very complex problem
@@ -102,9 +108,9 @@ def NewGame():
                 tile = tileBag.next();
                 if tile == TileType.DESERT:
                     robberPos = Point(x,y)
-                    spaces[x][y] = Tile(tile, -1)
+                    spaces[x,y] = Tile(tile, -1)
                 else:
-                    spaces[x][y] = Tile(tile, numberTokenBag.next())
+                    spaces[x,y] = Tile(tile, numberTokenBag.next())
 
     #Game begins with no roads or settlements in play
     peices = []
