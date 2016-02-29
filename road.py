@@ -5,6 +5,10 @@ class Road:
         self.adjHex1 = adjHex1
         self.adjHex2 = adjHex2
 
+    def isOnBoard(self):
+        return self.adjHex1.isOnBoard() OR \
+               self.adjHex2.isOnBoard()
+
 def RoadAdjacent(r1, r2):
     if (r1.adjHex1 == r2.adjHex1):
         return HexAdjacent(r1.adjHex2, r2.adjHex2)

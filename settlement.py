@@ -7,6 +7,11 @@ class Settlement:
         self.adjHex3 = adjHex3
         self.isCity = False
 
+    def isOnBoard(self):
+        return self.adjHex1.isOnBoard() OR \
+               self.adjHex2.isOnBoard() OR \
+               self.adjHex3.isOnBoard()
+
 def SettlementAdjacent(s1, s2):
     adjacencies = 0
 

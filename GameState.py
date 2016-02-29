@@ -1,6 +1,7 @@
 from tile import Tile
 from shuffleBag import ShuffleBag
 from point import Point
+from turn import Turn
 
 #anything in this file can still be refactored and shufled around. Just
 #trying to sort things out
@@ -24,13 +25,44 @@ class GameState:
         self.robberPos;
 
     def __init__(self, otherGameState):
-        self.spaces = otherGameState.spaces
-        self.players = otherGameState.players
-        self.peices = otherGameState.peices
-        self.turn = otherGameState.turn
+        self.spaces = list(otherGameState.spaces) #deep enough. We don't change these
+        self.players = list(otherGameState.players) #need deeper copy?
+        self.peices = list(otherGameState.peices) #need deeper copy? We may modify settlements...
+        self.turn = Turn(otherGameState.turn) #deep enough
 
-  
+    #gets child nodes on down the H-Minimax graph
+    def getPossibleNextStates(self):
+        newStates = []
+        
+        if turn.turnState == TurnState.DIE_ROLL:
+        elif turn.turnState == TurnState.PLAYER_ACTIONS: #the most complicated by far
+        elif turn.turnState == TurnState.INITIAL_PLACEMENT:
+            for x in range(0,4):
+                for y in range(0,4):
+                    basePoint = Point(x,y)
+                    if basePoint.isOnBoard():
+                        for point2 in basePoint.AllAdjacentPoints():
+                            for point3 in [val for val in \
+                                    basePoint.AllAdjacentPoints() if \
+                                    val in point2.AllAdjacentPoints()]:
+                                settlement = Settlement(basePoint, point2, point3)
+                                if settlement not in self.pieces:
+                                    #do we also need to make a deep copy of 'settlement'?
+                                    #in theory, we're never going to modify it...
+                                    state1 = self.Copy()
+                                    state1.peices.append(settlement, Road(basePoint, point2))
+                                    newStates.append(state1)
 
+                                    state2 = self.Copy()
+                                    state2.peices.append(settlement, Road(basePoint, point3))
+                                    newStates.append(state2)
+
+                                    state3 = self.Copy()
+                                    state3.peices.append(settlement, Road(point2, point3))
+                                    newStates.append(state1)
+
+        return newStates
+    
 #Returns a GameState representing a brand-new game
 #also providing example of what member data is supposed to look like
 def NewGame():
@@ -58,8 +90,8 @@ def NewGame():
 
     for x in range(0,4):
         for y in range(0,4):
-            if (x+y) > 6 or (x+y) < 2: #then these indices are off the board
-                spaces[x,y] = -1
+            if not Point(x,y).isOnBoard(): #then these indices are off the board
+                spaces[x][y] = -1
             else:
                 #TODO: Enforce the rule about red numbers not being next
                 #to each other. Is actually a very complex problem
@@ -70,9 +102,9 @@ def NewGame():
                 tile = tileBag.next();
                 if tile == TileType.DESERT:
                     robberPos = Point(x,y)
-                    spaces[x,y] = Tile(tile, -1)
+                    spaces[x][y] = Tile(tile, -1)
                 else:
-                    spaces[x,y] = Tile(tile, numberTokenBag.next())
+                    spaces[x][y] = Tile(tile, numberTokenBag.next())
 
     #Game begins with no roads or settlements in play
     peices = []
