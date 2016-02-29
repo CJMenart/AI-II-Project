@@ -1,5 +1,5 @@
 from tile import Tile
-from shuffleBag import ShuffleBag
+from ShuffleBag import ShuffleBag
 from point import Point
 
 #anything in this file can still be refactored and shufled around. Just
@@ -16,19 +16,22 @@ class GameState:
     #Two constructors: a copy constructor and one that passes in all data
     #variables individually
 
-    def __init__(self, spaces, players, peices, robberPos, turn):
+    def __init__(self, spaces, players, roads, settlements, robberPos, turn):
         self.spaces = spaces
         self.players = players
-        self.peices = peices
+        self.roads = roads
+        self.settlements = settlements
         self.turn = turn
-        self.robberPos;
+        self.robberPos = robberPos;
 
+# the second __init__ can overwrite the first init
+'''
     def __init__(self, otherGameState):
         self.spaces = otherGameState.spaces
         self.players = otherGameState.players
         self.peices = otherGameState.peices
         self.turn = otherGameState.turn
-
+'''
   
 
 #Returns a GameState representing a brand-new game
