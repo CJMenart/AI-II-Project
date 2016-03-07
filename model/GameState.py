@@ -60,16 +60,16 @@ class GameState:
                                     val in point2.AllAdjacentPoints()]:
                                 settlement = Settlement(basePoint, point2, point3)
                                 legalPlace = True
-                                if settlement in self.pieces:
+                                if settlement in self.settlements:
                                     legalPlace = False
-                                for existingSettlement in self.pieces:
+                                for existingSettlement in self.settlements:
                                     if settlementAdjacent(settlement, existingSettlement):
                                         legalPlace = False
                                 if legalPlace:
                                     #do we also need to make a deep copy of 'settlement'?
                                     #in theory, we're never going to modify it...
                                     state1 = copy.deepcopy(self)
-                                    state1.settlement.append(settlement)
+                                    state1.settlements.append(settlement)
                                     state1.roads.append(Road(basePoint, point2))
                                     newStates.append(state1)
 
