@@ -48,27 +48,29 @@ class Player:
     # get a list of available roads that the player could build
     def availableRoads(self, gameState):
         buildableRoads = []
-        for x in range(0,4):
-            for y in range(0,4):
-                basePoint = Point(x,y)
-                if not basePoint.isOnBoard():
-                    continue
-                for point2 in basePoint.AllAdjacentPoints():
-                    road = Road(basePoint, point2) #potentially a buildable road
-                    if road in gameState.roads:
-                        continue
-                    #Now we need to check if you have another road
-                    #adjacent to this one
-                    for existingRoad in self.roads():
-                        if basePoint == existingRoad.adjHex1:
-                            if HexAdjacent(point2, existingRoad.adjHex2):
-                                buildableRoads.append(road)
-                        if basePoint == existingRoad.adjHex2:
-                            if HexAdjacent(point2, existingRoad.adjHex1):
-                                buildableRoads.append(road)
+        for road in openRoadLocations(gameState):
+            #Now we need to check if you have another road
+            #adjacent to this one
+            for existingRoad in self.roads():
+                if basePoint == existingRoad.adjHex1:
+                    if HexAdjacent(point2, existingRoad.adjHex2):
+                        buildableRoads.append(road)
+                if basePoint == existingRoad.adjHex2:
+                    if HexAdjacent(point2, existingRoad.adjHex1):
+                        buildableRoads.append(road)
         return buildableRoads
     
-    # get a lsit of available settlements that the player could build
+    # get a list of available settlements that the player could build
+    def availableSettlements(self, gameState):
+        buildableSettlements = []
+        for settlement in openSettlementLocations(gameState):
+            for road in self.roads(gameState):
+                if road.adjHex1 in {basePoint, point2, point3} and \
+                        road.adjHex2 in {basePoint, point2, point3}:
+                    buildableSettlements.append(settlement)
+                    break
+        return buildableSettlements
+                    
 
     # build a road that belongs to the player, update gameState
     def buildRoad(self, hex1, hex2, gameState):

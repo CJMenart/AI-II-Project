@@ -11,7 +11,7 @@ class Point:
             self.y in range(0,4) and \
             (self.x+self.y) in range(2,6)
 
-    def AllAdjacentPoints(self):
+    def allAdjacentPoints(self):
         return [Point(self.x, self.y-1),
                 Point(self.x, self.y+1),
                 Point(self.x-1, self.y),
@@ -20,7 +20,7 @@ class Point:
                 Point(self.x-1, self.y+1)]
 
 #Takes two Points
-def HexAdjacent(h1, h2):
+def hexAdjacent(h1, h2):
     dx = h1.x - h2.x
     dy = h1.y - h2.y
 
@@ -33,3 +33,11 @@ def HexAdjacent(h1, h2):
 
     return False
 
+def pointsOnBoard():
+    points = []
+    for x in range(0,4):
+        for y in range(0,4):
+            newPoint = Point(x,y)
+            if newPoint.isOnBoard():
+                points.append(newPoint)
+    return points

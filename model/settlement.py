@@ -36,3 +36,23 @@ def settlementAdjacent(s1, s2):
         adjacencies += 1
     
     return adjacencies >= 2
+
+#returns a list of settlements
+#may return duplicates
+def openSettlementLocations(gameState):
+    openLocations = []
+        for point in pointsOnBoard():
+            for point2 in point.allAdjacentPoints():
+                for point3 in [val for val in \
+                                    basePoint.AllAdjacentPoints() if \
+                                    val in point2.AllAdjacentPoints()]:
+                    settlement = Settlement(basePoint, point2, point3)
+                    #check whether an existing settlement is in the same
+                    #space or adjacent
+                    legalPlacement = true
+                    for existingSettlement in gameState.settlements:
+                        if settlementAdjacent(settlement,existingSettlement):
+                            legalPlacement = false
+                    if legalPlacement:
+                        openLocations.append(settlement)
+    return openLocations                            

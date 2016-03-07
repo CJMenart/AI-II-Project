@@ -48,40 +48,32 @@ class GameState:
                             
         elif turn.turnState == TurnState.PLAYER_ACTIONS: #the most complicated by far
             
-            
+
         elif turn.turnState == TurnState.INITIAL_PLACEMENT:
-            for x in range(0,4):
-                for y in range(0,4):
-                    basePoint = Point(x,y)
-                    if basePoint.isOnBoard():
-                        for point2 in basePoint.AllAdjacentPoints():
-                            for point3 in [val for val in \
-                                    basePoint.AllAdjacentPoints() if \
-                                    val in point2.AllAdjacentPoints()]:
-                                settlement = Settlement(basePoint, point2, point3)
-                                legalPlace = True
-                                if settlement in self.settlements:
-                                    legalPlace = False
-                                for existingSettlement in self.settlements:
-                                    if settlementAdjacent(settlement, existingSettlement):
-                                        legalPlace = False
-                                if legalPlace:
-                                    #do we also need to make a deep copy of 'settlement'?
-                                    #in theory, we're never going to modify it...
-                                    state1 = copy.deepcopy(self)
-                                    state1.settlements.append(settlement)
-                                    state1.roads.append(Road(basePoint, point2))
-                                    newStates.append(state1)
+            for settlement in openSettlementLocations(self):
+                #do we also need to make a deep copy of 'settlement'?
+                #in theory, we're never going to modify it...
+                onBoard1 = settlement.adjHex1.isOnBoard()
+                onBoard2 = settlement.adjHex2.isOnBoard()
+                onBoard3 = settlement.adjHex3.isOnBoard()
+                
+                if onBoard1 or onBoard2:
+                    state1 = copy.deepcopy(self)
+                    state1.settlements.append(settlement)
+                    state1.roads.append(Road(settlement.adjHex1, settlement.adjHex2))
+                    newStates.append(state1)
 
-                                    state2 = copy.deepcopy(self)
-                                    state2.settlements.append(settlement)
-                                    state2.roads.append(Road(basePoint, point3))
-                                    newStates.append(state2)
+                if onBoard1 or onBoard3:
+                    state2 = copy.deepcopy(self)
+                    state2.settlements.append(settlement)
+                    state2.roads.append(Road(settlement.adjHex1, settlement.adjHex3))
+                    newStates.append(state2)
 
-                                    state3 = copy.deepcopy(self)
-                                    state3.settlements.append(settlement)
-                                    state3.roads.append(Road(point2, point3))
-                                    newStates.append(state3)
+                if onBoard2 or onBoard3:
+                    state3 = copy.deepcopy(self)
+                    state3.settlements.append(settlement)
+                    state3.roads.append(Road(settlement.adjHex2, settlement.adjHex3))
+                    newStates.append(state3)
                                     
         elif turn.turnState == TurnState.MOVE_ROBBER:
             for x in range(0,4):

@@ -25,3 +25,16 @@ def RoadAdjacent(r1, r2):
         return HexAdjacent(r1.adjHex1, r2.adjHex1)
     else:
         return false
+
+#returns a list of roads
+#may return duplicates
+def openRoadLocations(gameState):
+    openLocations = []
+    for basePoint in pointsOnBoard():
+        for point2 in basePoint.AllAdjacentPoints():
+            road = Road(basePoint, point2)
+            if road in gameState.roads:
+                continue
+            else
+                openLocations.append(road)
+    return openLocations = []
