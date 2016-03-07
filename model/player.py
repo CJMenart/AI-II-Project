@@ -1,13 +1,7 @@
 # this file defines player class that packages player associated data 
 # and behavior   
 from enum import Enum
-
-class ResourceType(Enum):
-    WOOL = 1
-    BRICK = 2
-    ORE = 3
-    LUMBER = 4
-    GRAIN = 5
+from resource import *
 
 class Player:
     def __init__(self, inputPlayerId, resources):

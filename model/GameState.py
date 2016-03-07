@@ -2,6 +2,7 @@ from tile import Tile
 from ShuffleBag import ShuffleBag
 from point import Point
 from turn import Turn
+from resource import *
 import copy
 
 #anything in this file can still be refactored and shufled around. Just
@@ -26,11 +27,25 @@ class GameState:
         self.turn = turn
         self.robberPos = robberPos;
   
-        #gets child nodes on down the H-Minimax graph
+    #gets child nodes on down the H-Minimax graph
     def getPossibleNextStates(self):
         newStates = []
         
         if turn.turnState == TurnState.DIE_ROLL:
+            for num in {1,2,3,4,5,6,8,9,10,11,12}:
+                newState = copy.deepcopy(self)
+                for settlement in newState.peices:
+                    for point in {settlement.adjHex1, settlement.adjHex2,settlement.adjHex3}:
+                        if newState.spaces[point.x, point.y].dieNumber == num:
+                            settlement.owner.addResource(
+                                newState.spaces[point.x,point.y].resourceTypeProduced(),
+                                2 if settlement.isCity else 1)
+                            newStates.append(newState)
+
+            #then add the state where you roll a 7
+            newState = copy.deepcopy(self)
+            newState.turn.turnState = TurnState.MOVE_ROBBER
+                            
         elif turn.turnState == TurnState.PLAYER_ACTIONS: #the most complicated by far
         elif turn.turnState == TurnState.INITIAL_PLACEMENT:
             for x in range(0,4):
@@ -109,15 +124,11 @@ def NewGame():
     #initialize players...and then
     players = []
     for player in range(0,3):
-        players.append(Player(player, {ResourceType.WOOL:0, ResourceType.BRICK:0, ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}))
+        players.append(Player(player, {ResourceType.WOOL:0, ResourceType.BRICK:0,
+                                       ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}))
 
     #construct the turn data with a randomly-selected player
     turn = Turn(TurnState.INITIAL_PLACEMENT, players[0])
     
     return GameState(spaces, players, peices, robberPos, turn)
-
-
-    
-
-    #TODO: incomplete function
 

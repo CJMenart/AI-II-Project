@@ -1,18 +1,18 @@
 from point import *
 
 class Settlement:
-    def __init__(self, adjHex1, adjHex2, adjHex3, playerId):
+    def __init__(self, adjHex1, adjHex2, adjHex3, owner):
         self.adjHex1 = adjHex1
         self.adjHex2 = adjHex2
         self.adjHex3 = adjHex3
         self.isCity = False
-        self.playerId = playerId
+        self.owner = owner
 
     def __eq__(self, other): 
         return (self.adjHex1 == other.adjHex1 and \
                     self.adjHex2 == other.adjHex2 and \
                     self.adjHex3 == other.adjHex3 and \
-                    self.playerId == other.playerId)
+                    self.owner == other.owner)
 
     def isOnBoard(self):
         return self.adjHex1.isOnBoard() OR \
