@@ -19,7 +19,7 @@ class Settlement:
                self.adjHex2.isOnBoard() OR \
                self.adjHex3.isOnBoard()
 
-def SettlementAdjacent(s1, s2):
+def settlementAdjacent(s1, s2):
     adjacencies = 0
 
     if (s1.adjHex1 == s2.adjHex1):

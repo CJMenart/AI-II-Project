@@ -10,6 +10,9 @@ class Player:
         #below: what a basic player with an empty hand looks like
         #self.resources = {ResourceType.WOOL: 0 , ResourceType.BRICK:0, ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}
 
+    def __eq__(self, other):
+        return self.playerId == other.playerId
+
     def addResource(self, resourceType, nResource):
         self.resources[resourceType] += nResource
         return 0 # means success                                                                    
