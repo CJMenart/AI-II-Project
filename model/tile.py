@@ -26,5 +26,5 @@ class Tile:
             return ResourceType.LUMBER
         elif (self.tileType == TileType.FIELDS):
             return ResourceType.GRAIN
-        else
+        else:
             return -1; #error

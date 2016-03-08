@@ -1,5 +1,11 @@
 # this file defines player class that packages player associated data 
-# and behavior   
+# and behavior
+
+#IMPORTNAT NOTE: As of now, SOME player functions cause in-place changse
+#to the player objects. Others return new states. It's not immediately
+#clear which is which. Possibly this should be addressed and refactored,
+#but I've been refactoring all day, so I'm not changing it now...
+
 from enum import Enum
 from resource import *
 
@@ -8,7 +14,8 @@ class Player:
         self.playerId = inputPlayerId
         self.resources = resources
         #below: what a basic player with an empty hand looks like
-        #self.resources = {ResourceType.WOOL: 0 , ResourceType.BRICK:0, ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}
+        #self.resources = {ResourceType.WOOL: 0 , ResourceType.BRICK:0,
+        #ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}
 
     def __eq__(self, other):
         return self.playerId == other.playerId
@@ -44,33 +51,108 @@ class Player:
                 playerSettlements.append(s)
         return playerSettlements
 
+    #returns a list of roads
+    #may return duplicates
+    def openRoadLocations(self,gameState):
+        openLocations = []
+        for basePoint in pointsOnBoard():
+            for point2 in basePoint.AllAdjacentPoints():
+                road = Road(basePoint, point2, self)
+                legalPlacement = True
+                for existingRoad in gameState.roads:
+                    if road.sameLocationAs(existingRoad):
+                        legalPlacement = False
+                if legalPlacement:
+                    openLocations.append(road)
+        return openLocations
+
 
     # get a list of available roads that the player could build
     def availableRoads(self, gameState):
         buildableRoads = []
-        for road in openRoadLocations(gameState):
+        for road in self.openRoadLocations(gameState):
             #Now we need to check if you have another road
             #adjacent to this one
             for existingRoad in self.roads():
                 if basePoint == existingRoad.adjHex1:
-                    if HexAdjacent(point2, existingRoad.adjHex2):
+                    if point2.adjacent(existingRoad.adjHex2):
                         buildableRoads.append(road)
                 if basePoint == existingRoad.adjHex2:
-                    if HexAdjacent(point2, existingRoad.adjHex1):
+                    if point2.adjacent(existingRoad.adjHex1):
                         buildableRoads.append(road)
         return buildableRoads
+
+    #returns a list of settlements
+    #may return duplicates
+    def openSettlementLocations(self, gameState):
+        openLocations = []
+        for point in pointsOnBoard():
+            for point2 in point.allAdjacentPoints():
+                for point3 in [val for val in \
+                                basePoint.AllAdjacentPoints() if \
+                                val in point2.AllAdjacentPoints()]:
+                    settlement = Settlement(basePoint, point2, point3, self)
+                    #check whether an existing settlement is in the same
+                    #space or adjacent
+                    legalPlacement = true
+                    for existingSettlement in gameState.settlements:
+                        if self.adjacentOrCloser(existingSettlement):
+                            legalPlacement = false
+                    if legalPlacement:
+                        openLocations.append(settlement)
+        return openLocations                            
+
     
     # get a list of available settlements that the player could build
     def availableSettlements(self, gameState):
         buildableSettlements = []
-        for settlement in openSettlementLocations(gameState):
+        for settlement in self.openSettlementLocations(gameState):
             for road in self.roads(gameState):
                 if road.adjHex1 in {basePoint, point2, point3} and \
                         road.adjHex2 in {basePoint, point2, point3}:
                     buildableSettlements.append(settlement)
                     break
         return buildableSettlements
-                    
+
+    #returns the child nodes of a GameState in which this player takes zero or one build options
+    def buildSomething(self, gameState):
+        possibleNextStates = []
+        #you could always just pass the turn.
+        passTurn = copy.deepcopy(gameState)
+        passTurn.turn.currentPlayer = gameState.nextPlayer()
+        #can you build a road?
+        if self.resources[ResourceType.BRICK] >= 1 and \
+               self.resources[ResourceType.LUMBER] >= 1:
+            for road in self.availableRoads(gameState):
+                builtRoad = copy.deepcopy(gameState)
+                builtRoad.roads.append(road)
+                builtRoad.turn.currentPlayer.resources[ResourceType.BRICK] -= 1
+                builtRoad.turn.currentPlayer.resources[ResourceType.LUMBER] -= 1
+                possibleNextState.append(builtRoad)
+        #can you build a settlement?
+        if self.resources[ResourceType.BRICK] >= 1 and \
+               self.resources[ResourceType.LUMBER] >= 1 and \
+               self.resources[ResourceType.WOOL] >= 1 and \
+               self.resources[ResourceType.GRAIN] >= 1:
+            for settlement in self.availableSettlements(gameState):
+                builtSettlement = copy.deepcopy(gameState)
+                builtSettlement.settlement.append(Settlement)
+                builtSettlement.turn.currentPlayer.resources[ResourceType.BRICK] -= 1
+                builtSettlement.turn.currentPlayer.resources[ResourceType.LUMBER] -= 1
+                builtSettlement.turn.currentPlayer.resources[ResourceType.WOOL] -= 1
+                builtSettlement.turn.currentPlayer.resources[ResourceType.GRAIN] -= 1
+                possibleNextState.append(builtSettlement)
+        #can you build a city?
+        if self.resources[ResourceType.GRAIN] >= 2 and \
+                   self.resources[ResourceType.ORE] >= 3:
+            for settlement in self.settlements(gameState):
+                if settlement.isCity == False:
+                    builtCity = copy.deepcopy(gameState)
+                    next([settlementToUpgrade for val in builtCity.settlements if \
+                             val == settlement]).isCity = True
+                    builtCity.turn.currentPlayer.resources[ResourcesType.GRAIN] -= 2
+                    builtCity.turn.currentPlayer.resources[ResourcesType.ORE] -= 3        
+        return possibleNextStates
 
     # build a road that belongs to the player, update gameState
     def buildRoad(self, hex1, hex2, gameState):

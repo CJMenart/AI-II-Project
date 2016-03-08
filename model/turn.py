@@ -1,3 +1,5 @@
+from enum import Enum
+
 class TurnState(Enum):
     DIE_ROLL = 1
     PLAYER_ACTIONS = 2

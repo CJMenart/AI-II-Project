@@ -19,19 +19,19 @@ class Point:
                 Point(self.x+1, self.y-1),
                 Point(self.x-1, self.y+1)]
 
-#Takes two Points
-def hexAdjacent(h1, h2):
-    dx = h1.x - h2.x
-    dy = h1.y - h2.y
+    #Takes two Points
+    def adjacent(self, h2):
+        dx = self.x - h2.x
+        dy = self.y - h2.y
 
-    if dx == 0 and abs(dy) == 1:
-        return True
-    if dy == 0 and abs(dx) == 1:
-        return True
-    if abs(dx) == 1 and dy == -dx:
-        return True
+        if dx == 0 and abs(dy) == 1:
+            return True
+        if dy == 0 and abs(dx) == 1:
+            return True
+        if abs(dx) == 1 and dy == -dx:
+            return True
 
-    return False
+        return False
 
 def pointsOnBoard():
     points = []

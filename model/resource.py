@@ -1,3 +1,5 @@
+from enum import Enum
+
 class ResourceType(Enum):
     WOOL = 1
     BRICK = 2

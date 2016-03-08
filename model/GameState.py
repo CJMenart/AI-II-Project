@@ -1,8 +1,9 @@
-from tile import Tile
+from tile import *
 from ShuffleBag import ShuffleBag
-from point import Point
-from turn import Turn
+from point import *
+from turn import *
 from resource import *
+from player import Player
 import copy
 
 #anything in this file can still be refactored and shufled around. Just
@@ -28,6 +29,12 @@ class GameState:
         self.robberPos = robberPos;
   
     #gets child nodes on down the H-Minimax graph
+    #Note that unlike in Chess or Go, the nodes here proceed at an uneven rate. Along
+    #some search branches, therefore, five turns may have progressed, while only three
+    #have progressed on another branch. This mainly occured because of the robber. BUt
+    #the actual build options of the players turn were also coded according to a lens
+    #where the number of decision points varies. I haven't yet determined if that's a
+    #serious issue.
     def getPossibleNextStates(self):
         newStates = []
         
@@ -47,6 +54,7 @@ class GameState:
             newState.turn.turnState = TurnState.MOVE_ROBBER
                             
         elif turn.turnState == TurnState.PLAYER_ACTIONS: #the most complicated by far
+            x = 2 #placeholder so that the code will compile
             
 
         elif turn.turnState == TurnState.INITIAL_PLACEMENT:
@@ -101,7 +109,7 @@ class GameState:
                                 newState = copy.deepcopy(self)
                                 newState.robberPos = point
                                 for player in newState.players:
-                                    if player == victim:
+                                    if player == victim: #this equality operation should work
                                         player.rmvResource(resource,1)
                                     if player == newState.turn.currentPlayer:
                                         player.addResource(resource,1)
@@ -110,10 +118,16 @@ class GameState:
                         
         return newStates
 
+    def nextPlayer(self):
+        index = self.players.index(self.turn.currentPlayer)
+        if index > len(self.players):
+            index = index - len(self.players)
+        return self.players[index]
+
 
 #Returns a GameState representing a brand-new game
 #also providing example of what member data is supposed to look like
-def NewGame():
+def newGame():
     tileBag = ShuffleBag([TileType.PASTURE,
                           TileType.PASTURE,
                           TileType.PASTURE,
@@ -133,29 +147,33 @@ def NewGame():
                           TileType.FIELDS,
                           TileType.FIELDS,
                           TileType.DESERT])
-    numberTokenBag = ShufleBag([2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12])
-    spaces = [[],[],[],[],[]]
+    numberTokenBag = ShuffleBag([2,3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11,12])
+    spaces = [[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1],\
+             [-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1]]
+    robberPos = -1
+
 
     for x in range(0,4):
         for y in range(0,4):
-            if not Point(x,y).isOnBoard(): #then these indices are off the board
-                spaces[x,y] = -1
-            else:
+            if Point(x,y).isOnBoard():
                 #TODO: Enforce the rule about red numbers not being next
                 #to each other. Is actually a very complex problem
                 #and we may not care enough to deal with it
-                #We could even do the 'standard' setup version where
+                #We could even do a 'standard' setup version where
                 #both numbers and tiles are in fixed position.
                 #Might generate a slightly wonkier heuristic tho?
-                tile = tileBag.next();
+                #Only if we use each separate resource as different
+                #inputs to a non-linear heuristic function, perhaps...
+                tile = tileBag.next()
                 if tile == TileType.DESERT:
                     robberPos = Point(x,y)
-                    spaces[x,y] = Tile(tile, -1)
+                    spaces[x][y] = Tile(tile, -1)
                 else:
-                    spaces[x,y] = Tile(tile, numberTokenBag.next())
+                    spaces[x][y] = Tile(tile, numberTokenBag.next())
 
     #Game begins with no roads or settlements in play
-    peices = []
+    settlements = []
+    roads = []
 
     #initialize players...and then
     players = []
@@ -166,5 +184,5 @@ def NewGame():
     #construct the turn data with a randomly-selected player
     turn = Turn(TurnState.INITIAL_PLACEMENT, players[0])
     
-    return GameState(spaces, players, peices, robberPos, turn)
+    return GameState(spaces, players, roads, settlements, robberPos, turn)
 
