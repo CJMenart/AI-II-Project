@@ -10,7 +10,7 @@ class Road:
         return (self.sameLocationAs(other) and self.owner == other.owner)
 
     def isOnBoard(self):
-        return self.adjHex1.isOnBoard() OR \
+        return self.adjHex1.isOnBoard() or \
                self.adjHex2.isOnBoard()
 
     def sameLocationAs(self, other):

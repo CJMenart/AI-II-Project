@@ -8,6 +8,8 @@
 
 from enum import Enum
 from resource import *
+from point import *
+from settlement import *
 
 class Player:
     def __init__(self, inputPlayerId, resources):
@@ -86,15 +88,15 @@ class Player:
     #may return duplicates
     def openSettlementLocations(self, gameState):
         openLocations = []
-        for point in pointsOnBoard():
-            for point2 in point.allAdjacentPoints():
+        for basePoint in pointsOnBoard():
+            for point2 in basePoint.allAdjacentPoints():
                 for point3 in [val for val in \
-                                basePoint.AllAdjacentPoints() if \
-                                val in point2.AllAdjacentPoints()]:
+                                basePoint.allAdjacentPoints() if \
+                                val in point2.allAdjacentPoints()]:
                     settlement = Settlement(basePoint, point2, point3, self)
                     #check whether an existing settlement is in the same
                     #space or adjacent
-                    legalPlacement = true
+                    legalPlacement = True
                     for existingSettlement in gameState.settlements:
                         if self.adjacentOrCloser(existingSettlement):
                             legalPlacement = false

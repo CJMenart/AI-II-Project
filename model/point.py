@@ -7,9 +7,9 @@ class Point:
         return a.x == b.x and a.y == b.y
 
     def isOnBoard(self):
-        return self.x in range(0,4) and \
-            self.y in range(0,4) and \
-            (self.x+self.y) in range(2,6)
+        return self.x in range(0,5) and \
+            self.y in range(0,5) and \
+            (self.x+self.y) in range(2,7)
 
     def allAdjacentPoints(self):
         return [Point(self.x, self.y-1),
@@ -35,8 +35,8 @@ class Point:
 
 def pointsOnBoard():
     points = []
-    for x in range(0,4):
-        for y in range(0,4):
+    for x in range(0,5):
+        for y in range(0,5):
             newPoint = Point(x,y)
             if newPoint.isOnBoard():
                 points.append(newPoint)

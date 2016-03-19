@@ -15,8 +15,8 @@ class Settlement:
                     self.owner == other.owner)
 
     def isOnBoard(self):
-        return self.adjHex1.isOnBoard() OR \
-               self.adjHex2.isOnBoard() OR \
+        return self.adjHex1.isOnBoard() or \
+               self.adjHex2.isOnBoard() or \
                self.adjHex3.isOnBoard()
 
     def adjacentOrCloser(self, s2):

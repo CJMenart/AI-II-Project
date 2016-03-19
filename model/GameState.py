@@ -4,6 +4,7 @@ from point import *
 from turn import *
 from resource import *
 from player import Player
+from road import *
 import copy
 
 #anything in this file can still be refactored and shufled around. Just
@@ -38,7 +39,7 @@ class GameState:
     def getPossibleNextStates(self):
         newStates = []
         
-        if turn.turnState == TurnState.DIE_ROLL:
+        if self.turn.turnState == TurnState.DIE_ROLL:
             for num in {1,2,3,4,5,6,8,9,10,11,12}:
                 newState = copy.deepcopy(self)
                 for settlement in newState.settlement:
@@ -53,12 +54,12 @@ class GameState:
             newState = copy.deepcopy(self)
             newState.turn.turnState = TurnState.MOVE_ROBBER
                             
-        elif turn.turnState == TurnState.PLAYER_ACTIONS: #the most complicated by far
+        elif self.turn.turnState == TurnState.PLAYER_ACTIONS: #the most complicated by far
             x = 2 #placeholder so that the code will compile
             
 
-        elif turn.turnState == TurnState.INITIAL_PLACEMENT:
-            for settlement in openSettlementLocations(self):
+        elif self.turn.turnState == TurnState.INITIAL_PLACEMENT:
+            for settlement in self.turn.currentPlayer.openSettlementLocations(self):
                 #do we also need to make a deep copy of 'settlement'?
                 #in theory, we're never going to modify it...
                 onBoard1 = settlement.adjHex1.isOnBoard()
@@ -68,24 +69,24 @@ class GameState:
                 if onBoard1 or onBoard2:
                     state1 = copy.deepcopy(self)
                     state1.settlements.append(settlement)
-                    state1.roads.append(Road(settlement.adjHex1, settlement.adjHex2))
+                    state1.roads.append(Road(settlement.adjHex1, settlement.adjHex2, self.turn.currentPlayer))
                     newStates.append(state1)
 
                 if onBoard1 or onBoard3:
                     state2 = copy.deepcopy(self)
                     state2.settlements.append(settlement)
-                    state2.roads.append(Road(settlement.adjHex1, settlement.adjHex3))
+                    state2.roads.append(Road(settlement.adjHex1, settlement.adjHex3, self.turn.currentPlayer))
                     newStates.append(state2)
 
                 if onBoard2 or onBoard3:
                     state3 = copy.deepcopy(self)
                     state3.settlements.append(settlement)
-                    state3.roads.append(Road(settlement.adjHex2, settlement.adjHex3))
+                    state3.roads.append(Road(settlement.adjHex2, settlement.adjHex3, self.turn.currentPlayer))
                     newStates.append(state3)
                                     
-        elif turn.turnState == TurnState.MOVE_ROBBER:
-            for x in range(0,4):
-                for y in range(0,4):
+        elif self.turn.turnState == TurnState.MOVE_ROBBER:
+            for x in range(0,5):
+                for y in range(0,5):
                     point = Point(x,y)
                     if not point.isOnBoard() or point == robberPos:
                         continue
@@ -153,8 +154,8 @@ def newGame():
     robberPos = -1
 
 
-    for x in range(0,4):
-        for y in range(0,4):
+    for x in range(0,5):
+        for y in range(0,5):
             if Point(x,y).isOnBoard():
                 #TODO: Enforce the rule about red numbers not being next
                 #to each other. Is actually a very complex problem
@@ -166,7 +167,10 @@ def newGame():
                 #inputs to a non-linear heuristic function, perhaps...
                 tile = tileBag.next()
                 if tile == TileType.DESERT:
+                    print("Found Desert")
                     robberPos = Point(x,y)
+                    print(robberPos.x)
+                    print(robberPos.y)
                     spaces[x][y] = Tile(tile, -1)
                 else:
                     spaces[x][y] = Tile(tile, numberTokenBag.next())
