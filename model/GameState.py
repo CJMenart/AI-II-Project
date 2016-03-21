@@ -42,6 +42,7 @@ class GameState:
         if self.turn.turnState == TurnState.DIE_ROLL:
             for num in {1,2,3,4,5,6,8,9,10,11,12}:
                 newState = copy.deepcopy(self)
+                newState.turn.turnState = TurnState.PLAYER_ACTIONS
                 for settlement in newState.settlement:
                     for point in {settlement.adjHex1, settlement.adjHex2,settlement.adjHex3}:
                         if newState.spaces[point.x, point.y].dieNumber == num:
@@ -55,8 +56,7 @@ class GameState:
             newState.turn.turnState = TurnState.MOVE_ROBBER
                             
         elif self.turn.turnState == TurnState.PLAYER_ACTIONS: #the most complicated by far
-            x = 2 #placeholder so that the code will compile
-            
+            newStates.append(self.turn.currentPlayer.buildSomething(self))
 
         elif self.turn.turnState == TurnState.INITIAL_PLACEMENT:
             for settlement in self.turn.currentPlayer.openSettlementLocations(self):
@@ -65,24 +65,28 @@ class GameState:
                 onBoard1 = settlement.adjHex1.isOnBoard()
                 onBoard2 = settlement.adjHex2.isOnBoard()
                 onBoard3 = settlement.adjHex3.isOnBoard()
-                
+
+                possibleRoads = []
                 if onBoard1 or onBoard2:
-                    state1 = copy.deepcopy(self)
-                    state1.settlements.append(settlement)
-                    state1.roads.append(Road(settlement.adjHex1, settlement.adjHex2, self.turn.currentPlayer))
-                    newStates.append(state1)
-
+                    possibleRoads.append(Road(settlement.adjHex1, settlement.adjHex2, self.turn.currentPlayer))
                 if onBoard1 or onBoard3:
-                    state2 = copy.deepcopy(self)
-                    state2.settlements.append(settlement)
-                    state2.roads.append(Road(settlement.adjHex1, settlement.adjHex3, self.turn.currentPlayer))
-                    newStates.append(state2)
-
+                    possibleRoads.append(Road(settlement.adjHex1, settlement.adjHex3, self.turn.currentPlayer))
                 if onBoard2 or onBoard3:
-                    state3 = copy.deepcopy(self)
-                    state3.settlements.append(settlement)
-                    state3.roads.append(Road(settlement.adjHex2, settlement.adjHex3, self.turn.currentPlayer))
-                    newStates.append(state3)
+                    possibleRoads.append(Road(settlement.adjHex2, settlement.adjHex3, self.turn.currentPlayer))
+                
+                for road in possibleRoads:
+                    newState = copy.deepcopy(self)
+                    newState.settlements.append(settlement)
+                    newState.roads.append(road)
+
+                    if len(newState.settlements) == 2*len(newState.players):
+                        newState.turn.turnState = TurnState.DIE_ROLL
+                    elif len(newState.settlements) >= len(newState.players):
+                        newState.turn.currentPlayer = newState.previousPlayer()
+                    else:
+                        newState.turn.currentPlayer = newState.nextPlayer()
+                    
+                    newStates.append(newState)
                                     
         elif self.turn.turnState == TurnState.MOVE_ROBBER:
             for x in range(0,5):
@@ -121,10 +125,18 @@ class GameState:
 
     def nextPlayer(self):
         index = self.players.index(self.turn.currentPlayer)
-        if index > len(self.players):
+        index = index + 1
+        if index >= len(self.players):
             index = index - len(self.players)
         return self.players[index]
 
+    def previousPlayer(self):
+        index = self.players.index(self.turn.currentPlayer)
+        index = index - 1
+        if index < 0:
+            index = index + len(self.players)
+        return self.players[index]
+            
 
 #Returns a GameState representing a brand-new game
 #also providing example of what member data is supposed to look like
@@ -167,10 +179,7 @@ def newGame():
                 #inputs to a non-linear heuristic function, perhaps...
                 tile = tileBag.next()
                 if tile == TileType.DESERT:
-                    print("Found Desert")
                     robberPos = Point(x,y)
-                    print(robberPos.x)
-                    print(robberPos.y)
                     spaces[x][y] = Tile(tile, -1)
                 else:
                     spaces[x][y] = Tile(tile, numberTokenBag.next())

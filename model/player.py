@@ -98,8 +98,8 @@ class Player:
                     #space or adjacent
                     legalPlacement = True
                     for existingSettlement in gameState.settlements:
-                        if self.adjacentOrCloser(existingSettlement):
-                            legalPlacement = false
+                        if settlement.adjacentOrCloser(existingSettlement):
+                            legalPlacement = False
                     if legalPlacement:
                         openLocations.append(settlement)
         return openLocations                            
@@ -155,9 +155,3 @@ class Player:
                     builtCity.turn.currentPlayer.resources[ResourcesType.GRAIN] -= 2
                     builtCity.turn.currentPlayer.resources[ResourcesType.ORE] -= 3        
         return possibleNextStates
-
-    # build a road that belongs to the player, update gameState
-    def buildRoad(self, hex1, hex2, gameState):
-        return None
-
-    # build a settlement that belongs to the player, update gameState
