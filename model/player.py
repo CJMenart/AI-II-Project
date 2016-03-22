@@ -10,9 +10,11 @@ from enum import Enum
 from resource import *
 from point import *
 from settlement import *
+from road import *
 
 class Player:
-    def __init__(self, inputPlayerId, resources):
+    def __init__(self, inputPlayerId, resources = {ResourceType.WOOL: 0 , ResourceType.BRICK:0, \
+                ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}  ):
         self.playerId = inputPlayerId
         self.resources = resources
         #below: what a basic player with an empty hand looks like
@@ -41,7 +43,7 @@ class Player:
     def roads(self, gameState):
         playerRoads =[]
         for r in gameState.roads:
-            if r.playerId == self.playerId:
+            if r.owner == self.playerId:
                 playerRoads.append(r)
         return playerRoads
 
@@ -49,7 +51,7 @@ class Player:
     def settlements(self, gameState):
         playerSettlements = []
         for s in gameState.settlements:
-            if s.playerId == self.playerId:
+            if s.owner == self.playerId:
                 playerSettlements.append(s)
         return playerSettlements
 
@@ -58,7 +60,7 @@ class Player:
     def openRoadLocations(self,gameState):
         openLocations = []
         for basePoint in pointsOnBoard():
-            for point2 in basePoint.AllAdjacentPoints():
+            for point2 in basePoint.allAdjacentPoints():
                 road = Road(basePoint, point2, self)
                 legalPlacement = True
                 for existingRoad in gameState.roads:

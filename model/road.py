@@ -14,7 +14,9 @@ class Road:
                self.adjHex2.isOnBoard()
 
     def sameLocationAs(self, other):
-        return (self.adjHex1 == other.adjHex1 and self.adjHex2 == other.adjHex2)
+        # the adjHex could be in different order
+        return ((self.adjHex1 == other.adjHex1 and self.adjHex2 == other.adjHex2) or \
+                    (self.adjHex1 == other.adjHex2 and self.adjHex2 == other.adjHex1) )
 
     def adjacent(self, r2):
         if (self.adjHex1 == r2.adjHex1):

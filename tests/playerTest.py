@@ -14,7 +14,8 @@ from settlement import Settlement
 class TestPlayer(unittest.TestCase):
 
     def setUp(self):
-        self.player = Player(1)
+        self.player = Player(1, {ResourceType.WOOL: 0 , ResourceType.BRICK:0,ResourceType.\
+ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0} )
     def test_initial_nGrain(self):
         self.assertEqual(self.player.resources[ResourceType.GRAIN], 0)
     def test_add_1_grain_nGrain(self):
@@ -27,6 +28,11 @@ class TestPlayer(unittest.TestCase):
         self.player.addResource(ResourceType.GRAIN,1)
         self.player.addResource(ResourceType.BRICK,2)
         self.assertEqual(self.player.nResources(), 3)
+    def test_add_1_grain_GameState_change(self):
+        gameState = GameState([], [Player(1)],[],[],[],[])
+        self.assertEqual(gameState.players[0].resources[ResourceType.GRAIN], 0)
+        gameState.players[0].addResource(ResourceType.GRAIN,1)
+        self.assertEqual(gameState.players[0].resources[ResourceType.GRAIN], 1)
     def test_has_2_wool_remove_1_wool_nWool(self):
         self.player.addResource(ResourceType.WOOL,2)
         self.player.rmvResource(ResourceType.WOOL, 1)
@@ -65,6 +71,10 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(self.player.settlements(gameState)[0], \
                              Settlement(Point(0,0), Point(0,1), Point(1,0), 1))
 
+    def test_one_corner_settlement_available_roads(self):
+        gameState = GameState([], [Player(1)], [], [Settlement(Point(0,0), Point(0,1),\
+                               Point(1,0), 1)], [], [])
+        tempRoads = gameState.players[0].availableRoads(gameState)
 
 if __name__ == '__main__':
     unittest.main()
