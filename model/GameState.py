@@ -43,11 +43,11 @@ class GameState:
             for num in {1,2,3,4,5,6,8,9,10,11,12}:
                 newState = copy.deepcopy(self)
                 newState.turn.turnState = TurnState.PLAYER_ACTIONS
-                for settlement in newState.settlement:
-                    for point in {settlement.adjHex1, settlement.adjHex2,settlement.adjHex3}:
-                        if newState.spaces[point.x, point.y].dieNumber == num:
+                for settlement in newState.settlements:
+                    for point in [settlement.adjHex1, settlement.adjHex2,settlement.adjHex3]:
+                        if point.isOnBoard() and newState.spaces[point.x][point.y].dieNumber == num:
                             settlement.owner.addResource(
-                                newState.spaces[point.x,point.y].resourceTypeProduced(),
+                                newState.spaces[point.x][point.y].resourceTypeProduced(),
                                 2 if settlement.isCity else 1)
                             newStates.append(newState)
 
@@ -56,7 +56,7 @@ class GameState:
             newState.turn.turnState = TurnState.MOVE_ROBBER
                             
         elif self.turn.turnState == TurnState.PLAYER_ACTIONS: #the most complicated by far
-            newStates.append(self.turn.currentPlayer.buildSomething(self))
+            newStates.extend(self.turn.currentPlayer.buildSomething(self))
 
         elif self.turn.turnState == TurnState.INITIAL_PLACEMENT:
             for settlement in self.turn.currentPlayer.openSettlementLocations(self):

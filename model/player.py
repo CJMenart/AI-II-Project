@@ -11,6 +11,8 @@ from resource import *
 from point import *
 from settlement import *
 from road import *
+from turn import *
+import copy
 
 class Player:
     def __init__(self, inputPlayerId, resources = {ResourceType.WOOL: 0 , ResourceType.BRICK:0, \
@@ -124,6 +126,8 @@ class Player:
         #you could always just pass the turn.
         passTurn = copy.deepcopy(gameState)
         passTurn.turn.currentPlayer = gameState.nextPlayer()
+        passTurn.turn.turnState = TurnState.DIE_ROLL
+        possibleNextStates.append(passTurn)
         #can you build a road?
         if self.resources[ResourceType.BRICK] >= 1 and \
                self.resources[ResourceType.LUMBER] >= 1:
@@ -155,5 +159,6 @@ class Player:
                     next([settlementToUpgrade for val in builtCity.settlements if \
                              val == settlement]).isCity = True
                     builtCity.turn.currentPlayer.resources[ResourcesType.GRAIN] -= 2
-                    builtCity.turn.currentPlayer.resources[ResourcesType.ORE] -= 3        
+                    builtCity.turn.currentPlayer.resources[ResourcesType.ORE] -= 3
+                    possibleNextStates.append(builtCity)
         return possibleNextStates
