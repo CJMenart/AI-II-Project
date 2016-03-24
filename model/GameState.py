@@ -40,26 +40,26 @@ class GameState:
         newStates = []
         
         if self.turn.turnState == TurnState.DIE_ROLL:
-            for num in {1,2,3,4,5,6,8,9,10,11,12}:
+            for num in {2,3,4,5,6,8,9,10,11,12}:
                 newState = copy.deepcopy(self)
                 newState.turn.turnState = TurnState.PLAYER_ACTIONS
                 for settlement in newState.settlements:
                     for point in [settlement.adjHex1, settlement.adjHex2,settlement.adjHex3]:
                         if point.isOnBoard() and newState.spaces[point.x][point.y].dieNumber == num:
-                            settlement.owner.addResource(
+                            newState.getPlayerByIndex(settlement.owner).addResource(
                                 newState.spaces[point.x][point.y].resourceTypeProduced(),
                                 2 if settlement.isCity else 1)
-                            newStates.append(newState)
+                newStates.append(newState)
 
             #then add the state where you roll a 7
             newState = copy.deepcopy(self)
             newState.turn.turnState = TurnState.MOVE_ROBBER
                             
         elif self.turn.turnState == TurnState.PLAYER_ACTIONS: #the most complicated by far
-            newStates.extend(self.turn.currentPlayer.buildSomething(self))
+            newStates.extend(self.players[self.turn.currentPlayer].buildSomething(self))
 
         elif self.turn.turnState == TurnState.INITIAL_PLACEMENT:
-            for settlement in self.turn.currentPlayer.openSettlementLocations(self):
+            for settlement in self.players[self.turn.currentPlayer].openSettlementLocations(self):
                 #do we also need to make a deep copy of 'settlement'?
                 #in theory, we're never going to modify it...
                 onBoard1 = settlement.adjHex1.isOnBoard()
@@ -114,9 +114,9 @@ class GameState:
                                 newState = copy.deepcopy(self)
                                 newState.robberPos = point
                                 for player in newState.players:
-                                    if player == victim: #this equality operation should work
+                                    if player == newState.getPlayerByIndex(victim):
                                         player.rmvResource(resource,1)
-                                    if player == newState.turn.currentPlayer:
+                                    if player == newState.getPlayerByIndex(newState.turn.currentPlayer):
                                         player.addResource(resource,1)
                                 newState.turn.turnState = TurnState.PLAYER_ACTIONS
                                 newStates.append(newState)
@@ -124,18 +124,22 @@ class GameState:
         return newStates
 
     def nextPlayer(self):
-        index = self.players.index(self.turn.currentPlayer)
-        index = index + 1
+        index = self.turn.currentPlayer + 1
         if index >= len(self.players):
             index = index - len(self.players)
-        return self.players[index]
+        return index
 
     def previousPlayer(self):
-        index = self.players.index(self.turn.currentPlayer)
-        index = index - 1
+        index = self.turn.currentPlayer - 1
         if index < 0:
             index = index + len(self.players)
+        return index
+
+    def getPlayerByIndex(self, index):
         return self.players[index]
+
+    def getPlayerIndex(self, player):
+        return self.players.index(player)
             
 
 #Returns a GameState representing a brand-new game
@@ -195,7 +199,7 @@ def newGame():
                                        ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}))
 
     #construct the turn data with a randomly-selected player
-    turn = Turn(TurnState.INITIAL_PLACEMENT, players[0])
+    turn = Turn(TurnState.INITIAL_PLACEMENT, 0)
     
     return GameState(spaces, players, roads, settlements, robberPos, turn)
 

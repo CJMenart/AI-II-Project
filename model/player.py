@@ -63,7 +63,7 @@ class Player:
         openLocations = []
         for basePoint in pointsOnBoard():
             for point2 in basePoint.allAdjacentPoints():
-                road = Road(basePoint, point2, self)
+                road = Road(basePoint, point2, gameState.getPlayerIndex(self))
                 legalPlacement = True
                 for existingRoad in gameState.roads:
                     if road.sameLocationAs(existingRoad):
@@ -97,7 +97,7 @@ class Player:
                 for point3 in [val for val in \
                                 basePoint.allAdjacentPoints() if \
                                 val in point2.allAdjacentPoints()]:
-                    settlement = Settlement(basePoint, point2, point3, self)
+                    settlement = Settlement(basePoint, point2, point3, gameState.getPlayerIndex(self))
                     #check whether an existing settlement is in the same
                     #space or adjacent
                     legalPlacement = True
@@ -125,7 +125,7 @@ class Player:
         possibleNextStates = []
         #you could always just pass the turn.
         passTurn = copy.deepcopy(gameState)
-        passTurn.turn.currentPlayer = gameState.nextPlayer()
+        passTurn.turn.currentPlayer = passTurn.nextPlayer()
         passTurn.turn.turnState = TurnState.DIE_ROLL
         possibleNextStates.append(passTurn)
         #can you build a road?
