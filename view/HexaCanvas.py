@@ -2,8 +2,14 @@
 # Editted to play with layout.py by Michael Zoller on 3/25/2016
 
 from Tkinter import *
-#from layout import *
 import layout
+
+import sys
+sys.path[0] += '/../model'
+
+import GameState
+from point import *
+from tile import *
 
 class HexaCanvas(Canvas):
     """ A canvas that provides a create-hexagone method """
@@ -110,14 +116,13 @@ class HexagonalGrid(HexaCanvas):
 
             pix_y = size + yCell*1.5*size
         else:
-            pix = layout.hex_to_pixel(hex_layout, layout.ScreenPoint(xCell, yCell))
+            pix = layout.hex_to_pixel(self.hex_layout, layout.ScreenPoint(xCell, yCell))
             pix_x = pix.x
             pix_y = pix.y
         self.create_hexagone(pix_x, pix_y, *args, **kwargs)
 
 
-
-if __name__ == "__main__":
+def view(game):
     tk = Tk()
 
     scale = 50
@@ -144,10 +149,25 @@ if __name__ == "__main__":
         grid.setCell(1,2, fill='white')
         grid.setCell(2,2, fill='gray')
     else:
+        fills = {}
+        fills[TileType.FIELDS] = "yellow"
+        fills[TileType.FOREST] = "brown"
+        fills[TileType.MOUNTAINS] = "gray"
+        fills[TileType.HILLS] = "red"
+        fills[TileType.PASTURE] = "green"
+        fills[TileType.DESERT] = "white"
+
         for x in range(0,5):
             for y in range(0,5):
-                if (x+y) in range(2,7):
-                    label = "({0}, {1})".format(x, y)
-                    grid.setCell(x,y, label)
+                if Point(x,y).isOnBoard():
+                    label = "{0}".format(game.spaces[x][y].dieNumber)
+                    label += "\n({0}, {1})".format(x, y)
+                    #label = game.spaces[x][y].dieNumber
+                    fill = fills[game.spaces[x][y].tileType]
+                    grid.setCell(x,y, label, fill=fill)
 
     tk.mainloop()
+
+
+if __name__ == "__main__":
+    view(GameState.newGame())
