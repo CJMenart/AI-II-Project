@@ -142,15 +142,25 @@ class Player:
         passTurn.turn.currentPlayer = passTurn.nextPlayer()
         passTurn.turn.turnState = TurnState.DIE_ROLL
         possibleNextStates.append(passTurn)
+
+        #can you trade 4 resources to the bank to get a resource of your choice
+        for fromIndex in range(0,len(self.resources)):
+            if self.resources[index] >= 4:
+                for toIndex in [i for i in range(0,len(self.resources)) if i != fromIndex]:
+                    traded = copy.deepcopy(gameState)
+                    traded.players[traded.currentPlayer].resources[fromIndex] -= 4
+                    traded.players[traded.currentPlayer].resources[fromIndex] += 1
+                    possibleNextStates.append(traded)
+        
         #can you build a road?
         if self.resources[ResourceType.BRICK] >= 1 and \
                self.resources[ResourceType.LUMBER] >= 1:
             for road in self.availableRoads(gameState):
                 builtRoad = copy.deepcopy(gameState)
                 builtRoad.roads.append(road)
-                builtRoad.turn.currentPlayer.resources[ResourceType.BRICK] -= 1
-                builtRoad.turn.currentPlayer.resources[ResourceType.LUMBER] -= 1
-                possibleNextState.append(builtRoad)
+                builtRoad.players[builtRoad.turn.currentPlayer].resources[ResourceType.BRICK] -= 1
+                builtRoad.players[builtRoad.turn.currentPlayer].resources[ResourceType.LUMBER] -= 1
+                possibleNextStates.append(builtRoad)
         #can you build a settlement?
         if self.resources[ResourceType.BRICK] >= 1 and \
                self.resources[ResourceType.LUMBER] >= 1 and \
@@ -159,11 +169,11 @@ class Player:
             for settlement in self.availableSettlements(gameState):
                 builtSettlement = copy.deepcopy(gameState)
                 builtSettlement.settlement.append(Settlement)
-                builtSettlement.turn.currentPlayer.resources[ResourceType.BRICK] -= 1
-                builtSettlement.turn.currentPlayer.resources[ResourceType.LUMBER] -= 1
-                builtSettlement.turn.currentPlayer.resources[ResourceType.WOOL] -= 1
-                builtSettlement.turn.currentPlayer.resources[ResourceType.GRAIN] -= 1
-                possibleNextState.append(builtSettlement)
+                builtSettlement.players[builtSettlement.turn.currentPlayer].resources[ResourceType.BRICK] -= 1
+                builtSettlement.players[builtSettlement.turn.currentPlayer].resources[ResourceType.LUMBER] -= 1
+                builtSettlement.players[builtSettlement.turn.currentPlayer].resources[ResourceType.WOOL] -= 1
+                builtSettlement.players[builtSettlement.turn.currentPlayer].resources[ResourceType.GRAIN] -= 1
+                possibleNextStates.append(builtSettlement)
         #can you build a city?
         if self.resources[ResourceType.GRAIN] >= 2 and \
                    self.resources[ResourceType.ORE] >= 3:
@@ -172,7 +182,7 @@ class Player:
                     builtCity = copy.deepcopy(gameState)
                     next([settlementToUpgrade for val in builtCity.settlements if \
                              val == settlement]).isCity = True
-                    builtCity.turn.currentPlayer.resources[ResourcesType.GRAIN] -= 2
-                    builtCity.turn.currentPlayer.resources[ResourcesType.ORE] -= 3
+                    builtCity.players[builtCity.turn.currentPlayer].resources[ResourcesType.GRAIN] -= 2
+                    builtCity.players[builtCity.turn.currentPlayer].resources[ResourcesType.ORE] -= 3
                     possibleNextStates.append(builtCity)
         return possibleNextStates
