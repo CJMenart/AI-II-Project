@@ -54,6 +54,7 @@ class GameState:
             #then add the state where you roll a 7
             newState = copy.deepcopy(self)
             newState.turn.turnState = TurnState.MOVE_ROBBER
+            newStates.append(newState)
                             
         elif self.turn.turnState == TurnState.PLAYER_ACTIONS: #the most complicated by far
             newStates.extend(self.players[self.turn.currentPlayer].buildSomething(self))
