@@ -170,8 +170,10 @@ def newGame():
     robberPos = -1
 
 
-    for x in range(0,5):
-        for y in range(0,5):
+    # use -1 to and 6 to add outside padding, since outer most layer of roads needs 
+    # extra tile to represent
+    for x in range(-1,6):
+        for y in range(-1,6):
             if Point(x,y).isOnBoard():
                 #TODO: Enforce the rule about red numbers not being next
                 #to each other. Is actually a very complex problem

@@ -1,0 +1,57 @@
+# this file tests the point class                                                 
+import unittest
+import sys
+# fix the path in order to import player class                                           
+#originalPath = sys.path[0]                                                                         
+sys.path[0] += '/../model'
+from player import Player
+from player import ResourceType
+from GameState import GameState
+from road import Road
+from point import Point
+from settlement import Settlement
+
+class TestPoint(unittest.TestCase):
+    def setUp(self):
+        self.pt = Point(1, 4)
+    
+    def test_allAdjacentPoints_with_1_4(self):
+        self.pt = Point(1,4)
+        adjPoints = self.pt.allAdjacentPoints()
+        self.assertIn(Point(1,3), adjPoints)
+        self.assertIn(Point(1,5), adjPoints)
+        self.assertIn(Point(0,4), adjPoints)
+        self.assertIn(Point(2,4), adjPoints)
+        self.assertIn(Point(0,5), adjPoints)
+        self.assertIn(Point(2,5), adjPoints)
+        self.assertEqual(6, len(adjPoints))
+
+    def test_allAdjacentPoints_with_2_4(self):
+        self.pt = Point(2,4)
+        adjPoints = self.pt.allAdjacentPoints()
+        self.assertIn(Point(2,3), adjPoints)
+        self.assertIn(Point(2,5), adjPoints)
+        self.assertIn(Point(1,4), adjPoints)
+        self.assertIn(Point(3,4), adjPoints)
+        self.assertIn(Point(1,3), adjPoints)
+        self.assertIn(Point(3,3), adjPoints)
+        self.assertEqual(6, len(adjPoints))
+
+    def test_allAdjacentPoints_with_3_4(self):
+        self.pt = Point(3,4)
+        adjPoints = self.pt.allAdjacentPoints()
+        self.assertIn(Point(3,3), adjPoints)
+        self.assertIn(Point(3,5), adjPoints)
+        self.assertIn(Point(2,4), adjPoints)
+        self.assertIn(Point(4,4), adjPoints)
+        self.assertIn(Point(2,5), adjPoints)
+        self.assertIn(Point(4,5), adjPoints)
+        self.assertEqual(6, len(adjPoints))
+    
+    def test_allAdjacentPoints_with_1_1(self):
+        self.pt= Point(1,1)
+        adjPoints = self.pt.allAdjacentPoints()
+        self.assertEqual(6, len(adjPoints))
+
+if __name__ == '__main__':
+    unittest.main()

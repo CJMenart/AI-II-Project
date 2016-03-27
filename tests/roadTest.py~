@@ -1,0 +1,27 @@
+# this file tests the road class                                                 
+import unittest
+import sys
+# fix the path in order to import player class                                           
+#originalPath = sys.path[0]                                                                         
+sys.path[0] += '/../model'
+from player import Player
+from player import ResourceType
+from GameState import GameState
+from road import Road
+from point import Point
+from settlement import Settlement
+
+class TestPlayer(unittest.TestCase):
+
+    def setUp(self):
+        self.r = Road(Point(1,2), Point(2,2), 1)
+
+    def test_adjacentRoads(self):
+        self.r = Road(Point(1,2), Point(2,2), 1)
+        adjRoads = self.r.adjacentRoads()
+        #for r in adjRoads: 
+        #    print(r)
+        self.assertIn(Road(Point(1,2), Point(1,1), -1), adjRoads)
+
+if __name__ == '__main__':
+    unittest.main()

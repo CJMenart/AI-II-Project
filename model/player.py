@@ -76,16 +76,30 @@ class Player:
     # get a list of available roads that the player could build
     def availableRoads(self, gameState):
         buildableRoads = []
+        '''
         for road in self.openRoadLocations(gameState):
             #Now we need to check if you have another road
             #adjacent to this one
-            for existingRoad in self.roads():
+            for existingRoad in self.roads(gameState):
                 if basePoint == existingRoad.adjHex1:
                     if point2.adjacent(existingRoad.adjHex2):
                         buildableRoads.append(road)
                 if basePoint == existingRoad.adjHex2:
                     if point2.adjacent(existingRoad.adjHex1):
                         buildableRoads.append(road)
+        '''
+        for s in self.settlements(gameState):
+            for closeRoad in s.adjacentRoads():
+                if closeRoad.isOnBoard() and closeRoad not in gameState.roads: 
+                    buildableRoads.append(closeRoad)
+        for r in self.roads(gameState):
+            for closeRoad in r.adjacentRoads():
+                #for mr in r.adjacentRoads():
+                #    print(mr)
+                if closeRoad.isOnBoard() and closeRoad not in gameState.roads and \
+                        closeRoad not in buildableRoads:
+                    buildableRoads.append(closeRoad)
+            
         return buildableRoads
 
     #returns a list of settlements

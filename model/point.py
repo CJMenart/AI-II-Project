@@ -6,6 +6,12 @@ class Point:
     def __eq__(a,b):
         return a.x == b.x and a.y == b.y
 
+    def __str__(self):
+        return ('({0}, {1})'.format(self.x, self.y))
+    
+    def __hash__(self):
+        return hash((self.x, self.y))
+
     def isOnBoard(self):
         return self.x in range(0,5) and \
             self.y in range(0,5) and \
@@ -16,8 +22,9 @@ class Point:
                 Point(self.x, self.y+1),
                 Point(self.x-1, self.y),
                 Point(self.x+1, self.y),
-                Point(self.x+1, self.y-1),
-                Point(self.x-1, self.y+1)]
+                # need to account for offset layout
+                Point(self.x-1, self.y-1+2*(self.x%2) ),
+                Point(self.x+1, self.y-1+2*(self.x%2) )]
 
     #Takes two Points
     def adjacent(self, h2):

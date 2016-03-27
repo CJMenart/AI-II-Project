@@ -1,9 +1,8 @@
-# this file tests the player class                                                                                                                                                                                                                                                            
-
+# this file tests the player class                                                 
 import unittest
 import sys
-# fix the path in order to import player class                                                                                                                                                                                                                                                
-#originalPath = sys.path[0]                                                                                                                                                                                                                                                                   
+# fix the path in order to import player class                                           
+#originalPath = sys.path[0]                                                                         
 sys.path[0] += '/../model'
 from player import Player
 from player import ResourceType
@@ -15,7 +14,8 @@ from settlement import Settlement
 class TestPlayer(unittest.TestCase):
 
     def setUp(self):
-        self.player = Player(1)
+        self.player = Player(1, {ResourceType.WOOL: 0 , ResourceType.BRICK:0,ResourceType.\
+ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0} )
     def test_initial_nGrain(self):
         self.assertEqual(self.player.resources[ResourceType.GRAIN], 0)
     def test_add_1_grain_nGrain(self):
@@ -28,6 +28,11 @@ class TestPlayer(unittest.TestCase):
         self.player.addResource(ResourceType.GRAIN,1)
         self.player.addResource(ResourceType.BRICK,2)
         self.assertEqual(self.player.nResources(), 3)
+    def test_add_1_grain_GameState_change(self):
+        gameState = GameState([], [Player(1)],[],[],[],[])
+        self.assertEqual(gameState.players[0].resources[ResourceType.GRAIN], 0)
+        gameState.players[0].addResource(ResourceType.GRAIN,1)
+        self.assertEqual(gameState.players[0].resources[ResourceType.GRAIN], 1)
     def test_has_2_wool_remove_1_wool_nWool(self):
         self.player.addResource(ResourceType.WOOL,2)
         self.player.rmvResource(ResourceType.WOOL, 1)
@@ -38,7 +43,7 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(self.player.resources[ResourceType.WOOL], 0)
     def test_has_2_wool_remove_3_wool_nWool(self):
         self.player.addResource(ResourceType.WOOL,2)
-        # should return 1 (error) when try to remove 3 wool                                                                                                                                                                                                                                   
+        # should return 1 (error) when try to remove 3 wool
         self.assertEqual(self.player.rmvResource(ResourceType.WOOL, 3), 1)
     def test_initial_empty_roads(self):
         gameState = GameState([],  [], [], [], [], [])
@@ -66,6 +71,82 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(self.player.settlements(gameState)[0], \
                              Settlement(Point(0,0), Point(0,1), Point(1,0), 1))
 
+    def test_one_corner_settlement_available_roads_1_0_and_2_1_and_1_1(self):
+        gameState = GameState([], [Player(1)], [], [Settlement(Point(1,0), Point(2,1),\
+                               Point(1,1), 1)], [], [])
+        availableRoads = gameState.players[0].availableRoads(gameState)
+        self.assertIn(Road(Point(1,0),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,0),Point(1,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,1),Point(2,1),-1 ), availableRoads)
+        self.assertEqual(len(availableRoads), 3)
+
+    def test_one_corner_settlement_available_roads_1_0_and_0_1_and_1_1(self):
+        gameState = GameState([], [Player(1)], [], [Settlement(Point(1,0), Point(0,1),\
+                               Point(1,1), 1)], [], [])
+        availableRoads = gameState.players[0].availableRoads(gameState)
+        self.assertIn(Road(Point(1,0),Point(1,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,0),Point(1,1),-1 ), availableRoads)
+        self.assertEqual(len(availableRoads), 2)
+
+    def test_one_corner_settlement_available_roads_m1_1_and_0_1_and_0_2(self):
+        gameState = GameState([], [Player(1)], [], [Settlement(Point(-1,1), Point(0,1),\
+                               Point(0,2), 1)], [], [])
+        availableRoads = gameState.players[0].availableRoads(gameState)
+        self.assertIn(Road(Point(0,1),Point(0,2),-1 ), availableRoads)
+        self.assertIn(Road(Point(-1,1),Point(0,2),-1 ), availableRoads)
+        self.assertEqual(len(availableRoads), 2)
+
+    def test_one_settlement_available_roads_2_2_and_2_1_and_1_1(self):
+        gameState = GameState([], [Player(1)], [], [Settlement(Point(2,2), Point(2,1),\
+                               Point(1,1), 1)], [], [])
+        availableRoads = gameState.players[0].availableRoads(gameState)
+        self.assertIn(Road(Point(2,2),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(2,2),Point(1,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,1),Point(2,1),-1 ), availableRoads)
+        self.assertEqual(len(availableRoads), 3)
+
+    def test_one_settlement_available_roads_2_2_and_2_1_and_1_1_built_road_22_and_21(self):
+        gameState = GameState([], [Player(1)], [Road(Point(2,2),Point(2,1), 1 )],\
+                                  [Settlement(Point(2,2), Point(2,1),\
+                               Point(1,1), 1)], [], [])
+        availableRoads = gameState.players[0].availableRoads(gameState)
+        #self.assertIn(Road(Point(2,2),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(2,2),Point(1,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,1),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(2,1),Point(3,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(2,2),Point(3,1),-1 ), availableRoads)
+        self.assertEqual(len(availableRoads), 4)
+
+    def test_one_settlement_available_roads_2_2_and_2_1_and_1_1_built_all_roads(self):
+        setupRoads = [Road(Point(2,2),Point(2,1), 1 ), \
+                          Road(Point(2,2),Point(1,1),-1 ), \
+                          Road(Point(1,1),Point(2,1),-1 )]
+        gameState = GameState([], [Player(1)], setupRoads,\
+                                  [Settlement(Point(2,2), Point(2,1),\
+                               Point(1,1), 1)], [], [])
+        #print('gameState len of setupRoads is {0} '.format(len(gameState.roads)))
+        availableRoads = gameState.players[0].availableRoads(gameState)
+        #self.assertIn(Road(Point(1,0),Point(1,1),-1 ), availableRoads)                   
+        #self.assertIn(Road(Point(1,0),Point(2,1),-1 ), availableRoads)
+        #self.assertIn(Road(Point(1,2),Point(1,1),-1 ), availableRoads)
+        #self.assertIn(Road(Point(1,2),Point(2,2),-1 ), availableRoads)
+        self.assertIn(Road(Point(3,1),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(3,1),Point(2,2),-1 ), availableRoads)
+        self.assertEqual(len(availableRoads), 6)
+
+    def test_two_settlement_available_roads(self):
+        setupSettlement = [Settlement(Point(1,0), Point(2,1), Point(1,1), 1), \
+                               Settlement(Point(2,3), Point(3,3), Point(2,4), 1)]
+        gameState = GameState([], [Player(1)], [], setupSettlement, [], [])
+        availableRoads = gameState.players[0].availableRoads(gameState)
+        self.assertIn(Road(Point(1,0),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,0),Point(1,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,1),Point(2,1),-1 ), availableRoads)
+        
+        self.assertIn(Road(Point(2,3),Point(3,3),-1 ), availableRoads)
+        self.assertIn(Road(Point(2,3),Point(2,4),-1 ), availableRoads)
+        self.assertIn(Road(Point(3,3),Point(2,4),-1 ), availableRoads)
+        self.assertEqual(len(availableRoads), 6)
 
 if __name__ == '__main__':
     unittest.main()
