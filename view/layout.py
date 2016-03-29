@@ -4,16 +4,19 @@
 import collections
 import math
 
+import sys
+sys.path[0] += '/../model'
+
+from point import *
+
+LAYOUT_DRAWING_FUNCS = False
 ScreenPoint = collections.namedtuple("ScreenPoint", ["x", "y"])
 
-def hex_subtract(a, b):
-    return Point(a.x - b.x, a.y - b.y)
+def pix_add(a, b):
+    return ScreenPoint(a.x + b.x, a.y + b.y)
 
-def hex_length(hex):
-    return (abs(hex.x) + abs(hex.y) + abs(-hex.x-hex.y)) // 2
-
-def hex_distance(a, b):
-    return hex_length(hex_subtract(a, b))
+def pix_subtract(a, b):
+    return ScreenPoint(a.x - b.x, a.y - b.y)
 
 def hex_round(h):
     hs = -h.x-h.y
@@ -31,16 +34,26 @@ def hex_round(h):
        #else: s = -q - r
     return Point(q, r)
 
-def hex_lerp(a, b, t):
-    return Point(a.x + (b.x-a.x)*t, a.y + (b.y-a.y)*t)
+if LAYOUT_DRAWING_FUNCS:
+    def hex_subtract(a, b):
+        return Point(a.x - b.x, a.y - b.y)
 
-def hex_linedraw(a, b):
-    N = hex_distance(a, b)
-    results = []
-    step = 1.0 / max(N, 1)
-    for i in range(0, N + 1):
-        results.append(hex_round(hex_lerp(a, b, step * i)))
-    return results
+    def hex_length(hex):
+        return (abs(hex.x) + abs(hex.y) + abs(-hex.x-hex.y)) // 2
+
+    def hex_distance(a, b):
+        return hex_length(hex_subtract(a, b))
+
+    def hex_lerp(a, b, t):
+        return Point(a.x + (b.x-a.x)*t, a.y + (b.y-a.y)*t)
+
+    def hex_linedraw(a, b):
+        N = hex_distance(a, b)
+        results = []
+        step = 1.0 / max(N, 1)
+        for i in range(0, N + 1):
+            results.append(hex_round(hex_lerp(a, b, step * i)))
+        return results
 
 Layout = collections.namedtuple("Layout", ["orientation", "size", "origin"])
 
@@ -72,6 +85,9 @@ def hex_corner_offset(layout, corner):
     angle = 2.0 * math.pi * (corner + M.start_angle) / 6
     return ScreenPoint(size.x * math.cos(angle), size.y * math.sin(angle))
 
+def hex_corner(layout, h, corner):
+    return pix_add(hex_to_pixel(layout, h), hex_corner_offset(layout, corner))
+
 def polygon_corners(layout, h):
     corners = []
     center = hex_to_pixel(layout, h)
@@ -79,3 +95,12 @@ def polygon_corners(layout, h):
         offset = hex_corner_offset(layout, i)
         corners.append(ScreenPoint(center.x + offset.x, center.y + offset.y))
     return corners
+
+hex_angles = [math.atan2(i.y, i.x) for i in point_directions]
+#for i in range(0, len(point_directions)):
+#    hex_angles[i] = math.atan2(point_directions[i].y, point_directions[i].x)
+
+def pix_shared_edge(layout, h1, h2):
+    endpoints = []
+    center = hex_to_pixel(layout, h1)
+    

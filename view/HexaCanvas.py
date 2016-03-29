@@ -8,8 +8,8 @@ import sys
 sys.path[0] += '/../model'
 
 import GameState
-from point import *
 from tile import *
+#from point import *
 
 class HexaCanvas(Canvas):
     """ A canvas that provides a create-hexagone method """
