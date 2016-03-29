@@ -22,20 +22,24 @@ def heuristic(gameState, playerIndex):
     #separately, for now
 
     #but we will count resources
-    resourceCount = sum(gameState.players[playerIndex].resources)
+    res = gameState.players[playerIndex].resources
+    resourceCount = res[ResourceType.ORE] + res[ResourceType.WOOL] + \
+            res[ResourceType.LUMBER] + res[ResourceType.GRAIN] + \
+            res[ResourceType.BRICK]
     resourceVal = -1
     if resourceCount < 8:
-        resourceVal = resourceVal / 7 * 100
+        resourceVal = resourceCount / 7 * 100
     else:
         resourceVal = 50
 
     #we can also count the number of build opportunities we might have
     numOptions = len(gameState.players[playerIndex].\
-                         availableSettlementLocations(gameState))
+                         availableSettlements(gameState))
     optionVal = -1
     if numOptions < 10:
         optionVal = numOptions / 10 * 100
     else:
         optionVal = 100
 
+    print(vpVal, resourceVal, optionVal)
     return vpVal*2/3 + resourceVal/6 + optionVal/6            
