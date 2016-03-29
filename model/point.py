@@ -33,9 +33,9 @@ class Point:
                 Point(self.x-1, self.y+1),
                 Point(self.x  , self.y+1),
                 Point(self.x+1, self.y  )]
-#                # DON'T need to account for offset layout (we are using axial coordinates)
-#                #Point(self.x-1, self.y-1+2*(self.x%2) ),
-#                #Point(self.x+1, self.y-1+2*(self.x%2) )
+                # DON'T need to account for offset layout (we are using axial coordinates)
+                #Point(self.x-1, self.y-1+2*(self.x%2) ),
+                #Point(self.x+1, self.y-1+2*(self.x%2) )
 
     #Takes two Points
     def adjacent(self, h2):
