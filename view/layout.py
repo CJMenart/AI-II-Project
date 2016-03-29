@@ -4,6 +4,7 @@
 import collections
 import math
 
+LAYOUT_DRAWING_FUNCS = False
 ScreenPoint = collections.namedtuple("ScreenPoint", ["x", "y"])
 
 def hex_subtract(a, b):
@@ -31,16 +32,17 @@ def hex_round(h):
        #else: s = -q - r
     return Point(q, r)
 
-def hex_lerp(a, b, t):
-    return Point(a.x + (b.x-a.x)*t, a.y + (b.y-a.y)*t)
+if LAYOUT_DRAWING_FUNCS:
+    def hex_lerp(a, b, t):
+        return Point(a.x + (b.x-a.x)*t, a.y + (b.y-a.y)*t)
 
-def hex_linedraw(a, b):
-    N = hex_distance(a, b)
-    results = []
-    step = 1.0 / max(N, 1)
-    for i in range(0, N + 1):
-        results.append(hex_round(hex_lerp(a, b, step * i)))
-    return results
+    def hex_linedraw(a, b):
+        N = hex_distance(a, b)
+        results = []
+        step = 1.0 / max(N, 1)
+        for i in range(0, N + 1):
+            results.append(hex_round(hex_lerp(a, b, step * i)))
+        return results
 
 Layout = collections.namedtuple("Layout", ["orientation", "size", "origin"])
 

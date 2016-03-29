@@ -17,14 +17,34 @@ class Point:
             self.y in range(0,5) and \
             (self.x+self.y) in range(2,7)
 
+    def add(self, h2):
+        Point(self.x + h2.x, self.y + h2.y)
+
+    def subtract(self, h2):
+        Point(self.x - h2.x, self.y - h2.y)
+
+    # these are in counter-clockwise order starting from 0 degrees for convenience with angles
+    directions = [Point( 1,-1),
+                  Point( 0,-1),
+                  Point(-1, 0),
+                  Point(-1, 1),
+                  Point( 0, 1),
+                  Point( 1, 0)]
+
     def allAdjacentPoints(self):
-        return [Point(self.x, self.y-1),
-                Point(self.x, self.y+1),
-                Point(self.x-1, self.y),
-                Point(self.x+1, self.y),
-                # need to account for offset layout
-                Point(self.x-1, self.y-1+2*(self.x%2) ),
-                Point(self.x+1, self.y-1+2*(self.x%2) )]
+        results = []
+        for i in range(0, len(directions)):
+            results.append(self.add(directions[i]))
+        return results
+#        return [Point(self.x+1, self.y-1),
+#                Point(self.x  , self.y-1),
+#                Point(self.x-1, self.y  ),
+#                Point(self.x-1, self.y+1),
+#                Point(self.x  , self.y+1),
+#                Point(self.x+1, self.y  )]
+#                # DON'T need to account for offset layout (we are using axial coordinates)
+#                #Point(self.x-1, self.y-1+2*(self.x%2) ),
+#                #Point(self.x+1, self.y-1+2*(self.x%2) )
 
     #Takes two Points
     def adjacent(self, h2):
