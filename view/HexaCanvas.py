@@ -1,5 +1,4 @@
-# Most code from top answer here: http://stackoverflow.com/questions/26583602/displaying-data-in-a-hexagonal-grid-using-python
-# Editted to play with layout.py by Michael Zoller on 3/25/2016
+# Hereafter 'stackoverflow' shall refer to the top answer here: http://stackoverflow.com/questions/26583602/displaying-data-in-a-hexagonal-grid-using-python
 
 from Tkinter import *
 import tkFont
@@ -27,6 +26,8 @@ debug_coordinates = True
 fake_roads = True
 fake_settlements = True
 
+# This class and most of its top 3 functions are from stackoverflow.
+# The remainder is original.
 class HexaCanvas(Canvas):
     """ A canvas that provides a create-hexagone method """
     def __init__(self, master, hex_layout, *args, **kwargs):
@@ -168,6 +169,8 @@ class HexaCanvas(Canvas):
             result.append(self.create_text(p, text=label, justify=CENTER, font=ffont))
         return result
 
+# This class (originally HexagonalGrid) and most of its setCell method are from stackoverflow.
+# The remainder is original.
 class CatanBoard(HexaCanvas):
     """ A grid whose each cell is hexagonal """
     def __init__(self, master, hex_layout, scale, radius_mult = 2, *args, **kwargs):
@@ -237,8 +240,7 @@ class CatanBoard(HexaCanvas):
         else:
             self.setVertex(cell1, cell2, cell3, **kwargs)
 
-
-
+# This class contains the remainder of the code from stackoverflow as well as a lot of original code.
 class View:
   def __init__(self, game):
     self.game = game
