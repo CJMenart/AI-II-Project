@@ -128,8 +128,8 @@ class Player:
         buildableSettlements = []
         for settlement in self.openSettlementLocations(gameState):
             for road in self.roads(gameState):
-                if road.adjHex1 in {basePoint, point2, point3} and \
-                        road.adjHex2 in {basePoint, point2, point3}:
+                if road.adjHex1 in {settlement.adjHex1, settlement.adjHex2, settlement.adjHex3} and \
+                        road.adjHex2 in {settlement.adjHex1, settlement.adjHex2, settlement.adjHex3}:
                     buildableSettlements.append(settlement)
                     break
         return buildableSettlements

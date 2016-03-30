@@ -80,6 +80,13 @@ class GameState:
                     newState.settlements.append(settlement)
                     newState.roads.append(road)
 
+                    #when they place their secnod settlement, a player gets resources
+                    if len(newState.settlements) >= len(newState.players):
+                        for adjHex in {settlement.adjHex1, settlement.adjHex2, settlement.adjHex3}:
+                            if adjHex.isOnBoard() and newStates.spaces[adjHex.x][adjHex.y].tileType != TileType.DESERT:
+                                newState.players[newState.turn.currentPlayer].\
+                                        addResource(newStates.spaces[adjHex.x][adjHex.y].resourceTypeProduced(), 1)
+
                     if len(newState.settlements) == 2*len(newState.players):
                         newState.turn.turnState = TurnState.DIE_ROLL
                     elif len(newState.settlements) >= len(newState.players):

@@ -3,6 +3,21 @@ from player import *
 
 #Code pertaining to the heuristic function for H-minimax
 
+
+#the evaluation fed to H-Mnimax
+def evaluate(gameState, playerIndex):
+    myScore = heuristic(gameState, playerIndex)
+
+    opponentScores = []
+
+    for opponentIndex in [i for i in range(0,len(gameState.players)) if i != playerIndex]:
+        opponentScores.append(heuristic(gameState, opponentIndex))
+
+    return myScore / (max(opponentScores)/2 + (sum(opponentScores)/len(opponentScores))/2)
+
+
+
+#evaluates a 'score' for how close a given player is to victory
 def heuristic(gameState, playerIndex):
     heuristicVal = 0
 
@@ -43,3 +58,4 @@ def heuristic(gameState, playerIndex):
 
     print(vpVal, resourceVal, optionVal)
     return vpVal*2/3 + resourceVal/6 + optionVal/6            
+
