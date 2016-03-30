@@ -3,6 +3,7 @@
 
 from Tkinter import *
 import tkFont
+import math
 import random
 
 import layout
@@ -16,8 +17,8 @@ from point import *
 from road import *
 from settlement import *
 #from turn import *
-#from resource import *
-#from player import Player
+from resource import *
+from player import Player
 
 no_vectorize = False
 no_layout_code = False
@@ -169,15 +170,19 @@ class HexaCanvas(Canvas):
 
 class CatanBoard(HexaCanvas):
     """ A grid whose each cell is hexagonal """
-    def __init__(self, master, scale, grid_width, grid_height, hex_layout, *args, **kwargs):
+    def __init__(self, master, hex_layout, scale, radius_mult = 2, *args, **kwargs):
 
-        dx     = (scale**2 - (scale/2.0)**2)**0.5
-        width  = 2 * dx * grid_width + dx
-        height = 1.5 * scale * grid_height + 0.5 * scale
+        #dx     = (scale**2 - (scale/2.0)**2)**0.5
+        #width  = 2 * dx * grid_width + dx
+        #height = 1.5 * scale * grid_height + 0.5 * scale
         self.hex_layout = hex_layout
+        M = hex_layout.orientation
+        self.width = (M.f0 * 2 + M.f1 * 2) * scale * radius_mult
+        #self.height = (M.f2 * 2 + M.f3 * 2) * scale * radius_mult
+        self.height = self.width
         self.robber = []
 
-        HexaCanvas.__init__(self, master, hex_layout, background='white', width=width, height=height, *args, **kwargs)
+        HexaCanvas.__init__(self, master, hex_layout, background='white', width=self.width, height=self.height, *args, **kwargs)
         self.setHexaSize(scale)
 
     def setCell(self, cell, *args, **kwargs ):
@@ -232,18 +237,40 @@ class CatanBoard(HexaCanvas):
         else:
             self.setVertex(cell1, cell2, cell3, **kwargs)
 
+
+
 class View:
   def __init__(self, game):
     self.game = game
+    #game.players.append(Player(len(game.players)))
+    nPlayers = len(game.players)
+    self.hand_positions = [None] * nPlayers
+    self.hand_text = [None] * nPlayers
     tk = Tk()
     self.tk = tk
+
+    gw = 9.5
+    gh = 10
     
     scale = 50
     size = 50
     orientation = layout.orientation_pointy if orientation_pointy else layout.orientation_flat
-    hex_layout = layout.Layout(orientation, layout.ScreenPoint(size, size), layout.ScreenPoint(3.5*scale, 3*scale+size*layout.orientation_pointy.f0))
-    self.board = CatanBoard(tk, scale = scale, grid_width=9.5, grid_height=10, hex_layout=hex_layout)
+    origin = layout.ScreenPoint(-scale*orientation.f0/2, -scale*orientation.f2/2)
+    hex_layout = layout.Layout(orientation, layout.ScreenPoint(size, size), origin)
+    self.board = CatanBoard(tk, hex_layout, scale, radius_mult=3)
     self.board.grid(row=0, column=0, padx=5, pady=5, columnspan=3)
+
+    bw = self.board.width#cget("width")
+    bh = self.board.height#cget("height")
+    center = Point(bw/2, bh/2)
+    for i in range(nPlayers):
+        angle = 2.0 * math.pi * i / nPlayers
+        pt = center - Point(0.4*bw * math.cos(angle), 0.4*bh * math.sin(angle))
+        self.hand_positions[i] = (pt.x, pt.y)
+
+    #origin = layout.ScreenPoint(origin.x * 3, origin.y * 3)
+    origin = layout.ScreenPoint(bw/2 - scale*(orientation.f0+orientation.f1)*2, bh/2 - scale*(orientation.f2+orientation.f3)*2)
+    self.board.hex_layout = layout.Layout(orientation, layout.ScreenPoint(size, size), origin)
 
     def correct_quit(tk):
         tk.destroy()
@@ -282,6 +309,8 @@ class View:
 
   def next_turn(self):
       print "The next_turn() function needs to be implemented!"
+      # [ have the next player perform their turn here ]
+      self.view(self.game)
 
   def first_time_view(self, game):
     randomColors = ['blue', 'red', 'green', 'yellow', 'cyan', 'teal', 'silver', 'white', 'gray']
@@ -336,5 +365,16 @@ class View:
         for s in settlements:
             self.board.setSettlement(s.adjHex1, s.adjHex2, s.adjHex3, s.isCity, fill=self.playerColors[s.owner])
 
+        for i in range(nPlayers):
+            if self.hand_text[i]:
+                self.board.delete(self.hand_text[i])
+
+            p = game.players[i]
+            text = "id {0}\nWOOL: {1}\nBRICK: {2}\nORE: {3}\nLUMBER: {4}\nGRAIN: {5}".format(p.playerId, p.resources[ResourceType.WOOL], p.resources[ResourceType.BRICK], p.resources[ResourceType.ORE], p.resources[ResourceType.LUMBER], p.resources[ResourceType.GRAIN])
+            self.hand_text[i] = self.board.create_text(self.hand_positions[i], text=text)
+
 if __name__ == "__main__":
-    View(GameState.newGame())
+    if len(sys.argv) > 1:
+        View(GameState.newGame(int(sys.argv[1])))
+    else:
+        View(GameState.newGame())

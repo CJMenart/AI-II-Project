@@ -145,7 +145,7 @@ class GameState:
 
 #Returns a GameState representing a brand-new game
 #also providing example of what member data is supposed to look like
-def newGame():
+def newGame(nPlayers=3):
     tileBag = ShuffleBag([TileType.PASTURE,
                           TileType.PASTURE,
                           TileType.PASTURE,
@@ -197,7 +197,7 @@ def newGame():
 
     #initialize players...and then
     players = []
-    for player in range(0,3):
+    for player in range(0,nPlayers):
         players.append(Player(player, {ResourceType.WOOL:0, ResourceType.BRICK:0,
                                        ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}))
 
@@ -205,4 +205,3 @@ def newGame():
     turn = Turn(TurnState.INITIAL_PLACEMENT, 0)
     
     return GameState(spaces, players, roads, settlements, robberPos, turn)
-
