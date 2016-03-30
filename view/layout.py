@@ -1,4 +1,4 @@
-# Most code from http://www.redblobgames.com/grids/hexagons/codegen/output/lib.py
+# 99% of code until otherwise stated is from http://www.redblobgames.com/grids/hexagons/codegen/output/lib.py
 # Editted to match our Point structure (known as "Hex" by the library) by Michael Zoller on 3/25/2016
 
 import collections
@@ -107,6 +107,7 @@ def polygon_corners(layout, h):
 def pixel_angle(p):
     return math.atan2(p.y, p.x)
 
+# All code that follows is original by Michael Zoller on 3/29/2016
 hex_angles = [pixel_angle(d) for d in point_directions]
 #print hex_angles
 assert all(hex_angles[i] < hex_angles[i+1] for i in xrange(len(hex_angles)-1))
