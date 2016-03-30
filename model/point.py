@@ -25,14 +25,14 @@ class Point:
 
 #    directions = [Point( 1,-1), Point( 0,-1), Point(-1, 0), Point(-1, 1), Point( 0, 1), Point( 1, 0)]
 
-    # these are in counter-clockwise order starting from 0 degrees for convenience with angles
+    # these are in order of their atan2 angles
     def allAdjacentPoints(self):
-        return [Point(self.x+1, self.y-1),
-                Point(self.x  , self.y-1),
-                Point(self.x-1, self.y  ),
-                Point(self.x-1, self.y+1),
+        return [Point(self.x  , self.y-1),
+                Point(self.x+1, self.y-1),
+                Point(self.x+1, self.y  ),
                 Point(self.x  , self.y+1),
-                Point(self.x+1, self.y  )]
+                Point(self.x-1, self.y+1),               
+                Point(self.x-1, self.y  )]
                 # DON'T need to account for offset layout (we are using axial coordinates)
                 #Point(self.x-1, self.y-1+2*(self.x%2) ),
                 #Point(self.x+1, self.y-1+2*(self.x%2) )

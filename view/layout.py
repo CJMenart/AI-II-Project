@@ -3,6 +3,7 @@
 
 import collections
 import math
+import bisect
 
 import sys
 sys.path[0] += '/../model'
@@ -17,6 +18,12 @@ def pix_add(a, b):
 
 def pix_subtract(a, b):
     return ScreenPoint(a.x - b.x, a.y - b.y)
+
+def pix_scale(a, k):
+    return ScreenPoint(a.x * k, a.y * k)
+
+def pix_avg(a, b):
+    return ScreenPoint((a.x+b.x)/2, (a.y+b.y)/2)
 
 def hex_round(h):
     hs = -h.x-h.y
@@ -59,7 +66,7 @@ Layout = collections.namedtuple("Layout", ["orientation", "size", "origin"])
 
 Orientation = collections.namedtuple("Orientation", ["f0", "f1", "f2", "f3", "b0", "b1", "b2", "b3", "start_angle"])
 
-orientation_pointy = Orientation(math.sqrt(3.0), math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, math.sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5)
+orientation_pointy = Orientation(math.sqrt(3.0), math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, math.sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, -0.5)
 orientation_flat = Orientation(3.0 / 2.0, 0.0, math.sqrt(3.0) / 2.0, math.sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, math.sqrt(3.0) / 3.0, 0.0)
 
 def hex_to_pixel(layout, h):
@@ -83,6 +90,7 @@ def hex_corner_offset(layout, corner):
     M = layout.orientation
     size = layout.size
     angle = 2.0 * math.pi * (corner + M.start_angle) / 6
+#    print "hex_corner_offset: corner=",corner,", angle=",180*angle/math.pi
     return ScreenPoint(size.x * math.cos(angle), size.y * math.sin(angle))
 
 def hex_corner(layout, h, corner):
@@ -96,11 +104,26 @@ def polygon_corners(layout, h):
         corners.append(ScreenPoint(center.x + offset.x, center.y + offset.y))
     return corners
 
-hex_angles = [math.atan2(i.y, i.x) for i in point_directions]
-#for i in range(0, len(point_directions)):
-#    hex_angles[i] = math.atan2(point_directions[i].y, point_directions[i].x)
+def pixel_angle(p):
+    return math.atan2(p.y, p.x)
 
+hex_angles = [pixel_angle(d) for d in point_directions]
+#print hex_angles
+assert all(hex_angles[i] < hex_angles[i+1] for i in xrange(len(hex_angles)-1))
+#for i in range(6):
+#    print point_directions[i], 180*hex_angles[i]/math.pi
+
+# returns the pixel endpoints of the edge the hexagons share
 def pix_shared_edge(layout, h1, h2):
-    endpoints = []
+    endpoints = [-1, -1]
     center = hex_to_pixel(layout, h1)
-    
+    #diff = h1-h2 #wonky solution
+    diff = h2-h1 #correct solution
+    angle = pixel_angle(diff)
+    start_corner = bisect.bisect_left(hex_angles, angle)
+    start_corner = (start_corner+4)%6
+    end_corner = (start_corner+1)%6
+    endpoints[0] = pix_add(center, hex_corner_offset(layout, start_corner))
+    endpoints[1] = pix_add(center, hex_corner_offset(layout, end_corner))
+#    print "h1:",h1,", h2:",h2,", diff:",diff,", angle:",180*angle/math.pi,", start_corner:",start_corner,", center:",center
+    return endpoints
