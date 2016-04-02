@@ -83,9 +83,9 @@ class GameState:
                     #when they place their secnod settlement, a player gets resources
                     if len(newState.settlements) >= len(newState.players):
                         for adjHex in {settlement.adjHex1, settlement.adjHex2, settlement.adjHex3}:
-                            if adjHex.isOnBoard() and newStates.spaces[adjHex.x][adjHex.y].tileType != TileType.DESERT:
+                            if adjHex.isOnBoard() and newState.spaces[adjHex.x][adjHex.y].tileType != TileType.DESERT:
                                 newState.players[newState.turn.currentPlayer].\
-                                        addResource(newStates.spaces[adjHex.x][adjHex.y].resourceTypeProduced(), 1)
+                                        addResource(newState.spaces[adjHex.x][adjHex.y].resourceTypeProduced(), 1)
 
                     if len(newState.settlements) == 2*len(newState.players):
                         newState.turn.turnState = TurnState.DIE_ROLL
@@ -100,14 +100,14 @@ class GameState:
             for x in range(0,5):
                 for y in range(0,5):
                     point = Point(x,y)
-                    if not point.isOnBoard() or point == robberPos:
+                    if not point.isOnBoard() or point == self.robberPos:
                         continue
                     
                     #Who can you steal from if you place the robber in this spot?
                     robbablePlayers = []
                     for settlement in self.settlements:
-                        if point in {settlements.adjHex1, settlements.adjHex2,
-                                     settlements.adjHex3}:
+                        if point in {settlement.adjHex1, settlement.adjHex2,
+                                     settlement.adjHex3}:
                             if settlement.owner not in robbablePlayers:
                                 robbablePlayers.append(settlement.owner)
 
@@ -117,7 +117,7 @@ class GameState:
                     #this never happens, so it's probably an acceptable simplification
                     for victim in robbablePlayers:
                         for resource in ResourceType:
-                            if victim.resources[resource] > 0:
+                            if self.getPlayerByIndex(victim).resources[resource] > 0:
                                 #now we know exactly the specification of one possible choice
                                 newState = copy.deepcopy(self)
                                 newState.robberPos = point

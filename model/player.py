@@ -144,12 +144,12 @@ class Player:
         possibleNextStates.append(passTurn)
 
         #can you trade 4 resources to the bank to get a resource of your choice
-        for fromIndex in range(0,len(self.resources)):
-            if self.resources[index] >= 4:
-                for toIndex in [i for i in range(0,len(self.resources)) if i != fromIndex]:
+        for fromIndex in ResourceType:
+            if self.resources[fromIndex] >= 4:
+                for toIndex in [i for i in ResourceType if i != fromIndex]:
                     traded = copy.deepcopy(gameState)
                     traded.players[traded.currentPlayer].resources[fromIndex] -= 4
-                    traded.players[traded.currentPlayer].resources[fromIndex] += 1
+                    traded.players[traded.currentPlayer].resources[toIndex] += 1
                     possibleNextStates.append(traded)
         
         #can you build a road?

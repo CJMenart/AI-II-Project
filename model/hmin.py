@@ -1,11 +1,22 @@
 from GameState import *
 from heuristic import *
+import time
 
 #iterative-deepening H-Minimax
-#iteratively does H-Minimax at increasing depth until it runs out of time,
-#expressed by 'timeLimit' in seconds
-#def IHM(gameState, timeLimit):
-    
+#iteratively does H-Minimax at increasing depth until it starts
+#taking longer than the 'time limit', expressed in seconds
+def IHM(gameState, timeLimit):
+    newState = -1
+    hVal = -1
+
+    for depth in range(1,20):
+        print("Depth: ", depth)
+        timestamp = time.clock()
+        (hVal, newState) = hMin(gameState, depth)
+        if (time.clock() - timestamp >= timeLimit):
+            return(hVal, newState)
+
+    return (hVal, newState)
 
 #does H-Minimax with alpha-beta pruning, optimizing to the given depth
 #returns (heuristic value for this state based on search, preferred next state)

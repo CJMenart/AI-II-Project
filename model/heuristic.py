@@ -49,7 +49,7 @@ def heuristic(gameState, playerIndex, weights):
 
     #we can also count the number of settlement-building opportunities we might have
     #gotta get territory!
-    numOptions = len(gameState.players[playerIndex].\
+    numOptions = len(gameState.getPlayerByIndex(playerIndex).\
                          availableSettlements(gameState))
     
 
