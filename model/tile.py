@@ -27,4 +27,18 @@ class Tile:
         elif (self.tileType == TileType.FIELDS):
             return ResourceType.GRAIN
         else:
-            return -1; #error
+            return -1 #error
+
+    def numPips(self):
+        if self.dieNumber == 2 or self.dieNumber == 12:
+            return 1
+        elif self.dieNumber == 3 or self.dieNumber == 11:
+            return 2
+        elif self.dieNumber == 4 or self.dieNumber == 10:
+            return 3
+        elif self.dieNumber == 5 or self.dieNumber == 9:
+            return 4
+        elif self.dieNumber == 6 or self.dieNumber == 8:
+            return 5
+        else:
+            return -1 #error

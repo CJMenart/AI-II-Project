@@ -186,3 +186,11 @@ class Player:
                     builtCity.players[builtCity.turn.currentPlayer].resources[ResourcesType.ORE] -= 3
                     possibleNextStates.append(builtCity)
         return possibleNextStates
+
+    def vp(self, gameState):
+        vp = 0
+        for settlement in gameState.settlements:
+            if settlement.owner == playerIndex:
+                vp += 2 if settlement.isCity else 1
+
+        return vp
