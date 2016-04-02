@@ -1,5 +1,11 @@
 from GameState import *
-from heuristic import evaluate
+from heuristic import *
+
+#iterative-deepening H-Minimax
+#iteratively does H-Minimax at increasing depth until it runs out of time,
+#expressed by 'timeLimit' in seconds
+#def IHM(gameState, timeLimit):
+    
 
 #does H-Minimax with alpha-beta pruning, optimizing to the given depth
 #returns (heuristic value for this state based on search, preferred next state)
@@ -12,7 +18,7 @@ def hMin (gameState, depth):
             values.append(hMin(state, depth-1)[0])
     elif depth == 1:
         for state in nextStates:
-            values.append(evaluate(state, state.turn.currentPlayer))
+            values.append(defaultEvaluation(state, state.turn.currentPlayer))
     else:
         return -1 #error. Depth must be at least 1
 

@@ -10,7 +10,7 @@ def defaultEvaluation(gameState, playerIndex):
 
 #the evaluation fed to H-Mnimax
 def evaluate(gameState, playerIndex, weights):
-    myScore = heuristic(gameState, playerIndex)
+    myScore = heuristic(gameState, playerIndex, weights)
 
     opponentScores = []
 

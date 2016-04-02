@@ -190,7 +190,7 @@ class Player:
     def vp(self, gameState):
         vp = 0
         for settlement in gameState.settlements:
-            if settlement.owner == playerIndex:
+            if settlement.owner == self.playerId:
                 vp += 2 if settlement.isCity else 1
 
         return vp
