@@ -57,6 +57,20 @@ class Player:
                 playerSettlements.append(s)
         return playerSettlements
 
+    def numBasicSettlements(self, gameState):
+        num = 0
+        for settlement in self.settlements():
+            if not settlement.isCity:
+                num += 1
+        return num
+
+    def numCities(self, gameState):
+        num = 0
+        for settlement in self.settlements():
+            if settlement.isCity:
+                num += 1
+        return num
+
     #returns a list of roads
     #may return duplicates
     def openRoadLocations(self,gameState):
@@ -165,7 +179,7 @@ class Player:
         if self.resources[ResourceType.BRICK] >= 1 and \
                self.resources[ResourceType.LUMBER] >= 1 and \
                self.resources[ResourceType.WOOL] >= 1 and \
-               self.resources[ResourceType.GRAIN] >= 1:
+               self.resources[ResourceType.GRAIN] >= 1 and self.numBasicSettlements() < 5:
             for settlement in self.availableSettlements(gameState):
                 builtSettlement = copy.deepcopy(gameState)
                 builtSettlement.settlements.append(settlement)
@@ -177,7 +191,7 @@ class Player:
         #can you build a city?
         if self.resources[ResourceType.GRAIN] >= 2 and \
                    self.resources[ResourceType.ORE] >= 3:
-            for settlement in self.settlements(gameState):
+            for settlement in self.settlements(gameState) and self.numCities() < 4:
                 if settlement.isCity == False:
                     builtCity = copy.deepcopy(gameState)
                     next(settlementToUpgrade for settlementToUpgrade in builtCity.settlements if \
