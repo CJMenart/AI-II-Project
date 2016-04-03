@@ -180,10 +180,10 @@ class Player:
             for settlement in self.settlements(gameState):
                 if settlement.isCity == False:
                     builtCity = copy.deepcopy(gameState)
-                    next([settlementToUpgrade for settlementToUpgrade in builtCity.settlements if \
-                             settlementToUpgrade == settlement]).isCity = True
-                    builtCity.getPlayerByIndex(builtCity.turn.currentPlayer).resources[ResourcesType.GRAIN] -= 2
-                    builtCity.getPlayerByIndex(builtCity.turn.currentPlayer).resources[ResourcesType.ORE] -= 3
+                    next(settlementToUpgrade for settlementToUpgrade in builtCity.settlements if \
+                             settlementToUpgrade == settlement).isCity = True
+                    builtCity.getPlayerByIndex(builtCity.turn.currentPlayer).resources[ResourceType.GRAIN] -= 2
+                    builtCity.getPlayerByIndex(builtCity.turn.currentPlayer).resources[ResourceType.ORE] -= 3
                     possibleNextStates.append(builtCity)
         return possibleNextStates
 

@@ -89,8 +89,10 @@ class GameState:
 
                     if len(newState.settlements) == 2*len(newState.players):
                         newState.turn.turnState = TurnState.DIE_ROLL
-                    elif len(newState.settlements) >= len(newState.players):
+                    elif len(newState.settlements) > len(newState.players):
                         newState.turn.currentPlayer = newState.previousPlayer()
+                    elif len(newState.settlements) == len(newState.players):
+                        newState.turn.currentPlayer = newState.turn.currentPlayer
                     else:
                         newState.turn.currentPlayer = newState.nextPlayer()
                     
