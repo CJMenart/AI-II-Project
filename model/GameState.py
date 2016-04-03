@@ -145,9 +145,6 @@ class GameState:
 
     def getPlayerByIndex(self, index):
         return self.players[index]
-
-    def getPlayerIndex(self, player):
-        return self.players.index(player)
             
 
 #Returns a GameState representing a brand-new game

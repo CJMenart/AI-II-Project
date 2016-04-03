@@ -14,8 +14,8 @@ class Settlement:
 
     def __eq__(self, other): 
         return (self.adjHex1 in [other.adjHex1, other.adjHex2, other.adjHex3] and \
-                    self.adjHex1 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
-                    self.adjHex1 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
+                    self.adjHex2 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
+                    self.adjHex3 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
                     self.owner == other.owner)
 
     def isOnBoard(self):
