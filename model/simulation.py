@@ -44,16 +44,27 @@ def simulateDecision(gameState):
 
 def skipToGoodPart():
     game = newGame()
+    game = game.getPossibleNextStates()[6]
     game = game.getPossibleNextStates()[8]
-    game = game.getPossibleNextStates()[8]
-    game = game.getPossibleNextStates()[8]
-    game = game.getPossibleNextStates()[8]
-    game = game.getPossibleNextStates()[8]
-    game = game.getPossibleNextStates()[8]
+    game = game.getPossibleNextStates()[10]
+    game = game.getPossibleNextStates()[12]
+    game = game.getPossibleNextStates()[14]
+    game = game.getPossibleNextStates()[16]
     for player in game.players:
-        player.resources[ResourceType.WOOL] = 3
-        player.resources[ResourceType.BRICK] = 3
-        player.resources[ResourceType.ORE] = 3
-        player.resources[ResourceType.LUMBER] = 3
-        player.resources[ResourceType.GRAIN] = 3
+        player.resources[ResourceType.WOOL] = 5
+        player.resources[ResourceType.BRICK] = 5
+        player.resources[ResourceType.ORE] = 5
+        player.resources[ResourceType.LUMBER] = 5
+        player.resources[ResourceType.GRAIN] = 5
     return game
+
+def simulateQuickGame():
+    game = skipToGoodPart()
+    while max(game.players[0].vp(game), game.players[1].vp(game), \
+              game.players[2].vp(game)) < 10:
+        game = simulateTurn(game)
+        print("Points: ", game.players[0].vp(game), \
+              game.players[1].vp(game), game.players[2].vp(game))
+    print("Game Won!")
+    print("Points: ", game.players[0].vp(game), \
+              game.players[1].vp(game), game.players[2].vp(game))

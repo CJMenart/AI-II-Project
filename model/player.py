@@ -168,7 +168,7 @@ class Player:
                self.resources[ResourceType.GRAIN] >= 1:
             for settlement in self.availableSettlements(gameState):
                 builtSettlement = copy.deepcopy(gameState)
-                builtSettlement.settlements.append(Settlement)
+                builtSettlement.settlements.append(settlement)
                 builtSettlement.getPlayerByIndex(builtSettlement.turn.currentPlayer).resources[ResourceType.BRICK] -= 1
                 builtSettlement.getPlayerByIndex(builtSettlement.turn.currentPlayer).resources[ResourceType.LUMBER] -= 1
                 builtSettlement.getPlayerByIndex(builtSettlement.turn.currentPlayer).resources[ResourceType.WOOL] -= 1
