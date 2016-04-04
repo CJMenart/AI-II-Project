@@ -1,6 +1,8 @@
 from GameState import *
 from heuristic import *
 import time
+from multiprocessing import Pool
+from functools import partial
 
 #iterative-deepening H-Minimax
 #iteratively does H-Minimax at increasing depth until it starts
@@ -20,18 +22,31 @@ def IHM(gameState, timeLimit):
 
 #does H-Minimax with alpha-beta pruning, optimizing to the given depth
 #returns (heuristic value for this state based on search, preferred next state)
-def hMin (gameState, depth):
+def hMin (gameState, depth, multithread = True):
+    print("Starting hMin function.")
+
     nextStates = gameState.getPossibleNextStates()
     values = []
 
-    if depth > 1:
-        for state in nextStates:
-            values.append(hMin(state, depth-1)[0])
-    elif depth == 1:
+    multithreadNextLevel = multithread and len(nextStates) < 3
+
+    if depth == 1:
         for state in nextStates:
             values.append(defaultEvaluation(state, state.turn.currentPlayer))
+    elif depth > 1 and multithread:
+        print("Pooling.")
+        pool = Pool(len(nextStates))
+        hTuples = pool.map(partial(hMin, depth = depth-1, \
+                            multithread=multithreadNextLevel), nextStates)
+        for tup in hTuples:
+            values.append(tup[0])
+    elif depth > 1 and not multithread:
+        for state in nextStates:
+            values.append(hMin(state, depth-1)[0])
     else:
         return -1 #error. Depth must be at least 1
+
+    print("Close to ending hMin function.")
 
     #if this is a chance node, we must do things differently
     if gameState.turn.turnState == TurnState.DIE_ROLL:
