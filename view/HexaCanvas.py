@@ -26,7 +26,7 @@ debug_coordinates = True
 fake_roads = True
 fake_settlements = True
 
-# This class and most of its top 3 functions are from stackoverflow.
+# This class and 60% of its top 3 functions are from stackoverflow.
 # The remainder is original.
 class HexaCanvas(Canvas):
     """ A canvas that provides a create-hexagone method """
@@ -169,7 +169,7 @@ class HexaCanvas(Canvas):
             result.append(self.create_text(p, text=label, justify=CENTER, font=ffont))
         return result
 
-# This class (originally HexagonalGrid) and most of its setCell method are from stackoverflow.
+# This class (originally HexagonalGrid) and 50% of its setCell method are from stackoverflow.
 # The remainder is original.
 class CatanBoard(HexaCanvas):
     """ A grid whose each cell is hexagonal """

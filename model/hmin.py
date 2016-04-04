@@ -47,6 +47,9 @@ def hMin (gameState, depth):
                 values[8]*2/36 + \
                 values[9]*1/36 + \
                 values[10]*6/36
+        # TODO Is this better?:
+        # weights = [1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 6]
+        # value = sum(p*q for p,q in zip(values, weights))/36
         return (value, -1)
     else:
         bestChoiceInd = values.index(max(values))

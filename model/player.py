@@ -6,7 +6,7 @@
 #clear which is which. Possibly this should be addressed and refactored,
 #but I've been refactoring all day, so I'm not changing it now...
 
-from enum import Enum
+#from enum import Enum
 from resource import *
 from point import *
 from settlement import *
@@ -59,14 +59,14 @@ class Player:
 
     def numBasicSettlements(self, gameState):
         num = 0
-        for settlement in self.settlements():
+        for settlement in self.settlements(gameState):
             if not settlement.isCity:
                 num += 1
         return num
 
     def numCities(self, gameState):
         num = 0
-        for settlement in self.settlements():
+        for settlement in self.settlements(gameState):
             if settlement.isCity:
                 num += 1
         return num
@@ -121,9 +121,10 @@ class Player:
     def openSettlementLocations(self, gameState):
         openLocations = []
         for basePoint in pointsOnBoard():
-            for point2 in basePoint.allAdjacentPoints():
+            basePointNbors = basePoint.allAdjacentPoints()
+            for point2 in basePointNbors:
                 for point3 in [val for val in \
-                                basePoint.allAdjacentPoints() if \
+                                basePointNbors if \
                                 val in point2.allAdjacentPoints()]:
                     settlement = Settlement(basePoint, point2, point3, self.playerId)
                     #check whether an existing settlement is in the same
@@ -134,7 +135,7 @@ class Player:
                             legalPlacement = False
                     if legalPlacement:
                         openLocations.append(settlement)
-        return openLocations                            
+        return openLocations
 
     
     # get a list of available settlements that the player could build
@@ -179,7 +180,7 @@ class Player:
         if self.resources[ResourceType.BRICK] >= 1 and \
                self.resources[ResourceType.LUMBER] >= 1 and \
                self.resources[ResourceType.WOOL] >= 1 and \
-               self.resources[ResourceType.GRAIN] >= 1 and self.numBasicSettlements() < 5:
+               self.resources[ResourceType.GRAIN] >= 1 and self.numBasicSettlements(gameState) < 5:
             for settlement in self.availableSettlements(gameState):
                 builtSettlement = copy.deepcopy(gameState)
                 builtSettlement.settlements.append(settlement)
@@ -190,8 +191,8 @@ class Player:
                 possibleNextStates.append(builtSettlement)
         #can you build a city?
         if self.resources[ResourceType.GRAIN] >= 2 and \
-                   self.resources[ResourceType.ORE] >= 3:
-            for settlement in self.settlements(gameState) and self.numCities() < 4:
+                   self.resources[ResourceType.ORE] >= 3 and self.numCities(gameState) < 4:
+            for settlement in self.settlements(gameState):
                 if settlement.isCity == False:
                     builtCity = copy.deepcopy(gameState)
                     next(settlementToUpgrade for settlementToUpgrade in builtCity.settlements if \

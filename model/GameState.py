@@ -123,11 +123,14 @@ class GameState:
                                 #now we know exactly the specification of one possible choice
                                 newState = copy.deepcopy(self)
                                 newState.robberPos = point
-                                for player in newState.players:
-                                    if player == newState.getPlayerByIndex(victim):
-                                        player.rmvResource(resource,1)
-                                    if player == newState.getPlayerByIndex(newState.turn.currentPlayer):
-                                        player.addResource(resource,1)
+                                #for player in newState.players:
+                                #    if player == newState.getPlayerByIndex(victim):
+                                #        player.rmvResource(resource,1)
+                                #    if player == newState.getPlayerByIndex(newState.turn.currentPlayer):
+                                #        player.addResource(resource,1)
+                                newState.getPlayerByIndex(victim).rmvResource(resource, 1)
+                                newState.getPlayerByIndex(newState.turn.currentPlayer).addResource(resource, 1)
+
                                 newState.turn.turnState = TurnState.PLAYER_ACTIONS
                                 newStates.append(newState)
                         
