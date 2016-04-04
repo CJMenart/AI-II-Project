@@ -207,10 +207,13 @@ def newGame(nPlayers=3):
 
     #initialize players...and then
     players = []
-    dict_args = zip(ResourceType, [0]*len(ResourceType))
-#    print dict(dict_args)
+    #dict_args = zip(ResourceType, [0]*len(ResourceType))
+    #print(dict(dict_args))
     for player_id in range(0,nPlayers):
-        players.append(Player(player_id, dict(dict_args)))#{ResourceType.WOOL:0, ResourceType.BRICK:0, ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}))
+        players.append(Player(player_id))
+    #for some reason, passing in dict_args resulting in players having an empty dictionary
+    #for self.resources
+    #{ResourceType.WOOL:0, ResourceType.BRICK:0, ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}))
 
     #construct the turn data with a randomly-selected player
     turn = Turn(TurnState.INITIAL_PLACEMENT, 0)

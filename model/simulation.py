@@ -51,12 +51,14 @@ def simulateDieRoll(gameState):
     return (states[stateIdx], (r1, r2))
 
 def simulateDecision(gameState):
-    ## TODO: why [1] ?
+    ## HMin functions return both heuristic evals and state. We take [1] because here we
+    #only want state.
     return IHM(gameState, 2)[1]
 
 def skipToGoodPart(**kwargs):
     game = newGame(**kwargs)
-    ## TODO: comments to explain why we are picking these particular next states
+    ## States here are arbitrary, to get past the portion of the game that thus far
+    #  is still prohibitively slow
     game = game.getPossibleNextStates()[6]
     game = game.getPossibleNextStates()[8]
     game = game.getPossibleNextStates()[10]
