@@ -5,11 +5,11 @@ from player import *
 
 #uses a default set of weights
 def defaultEvaluation(gameState, playerIndex):
-    return evaluate(gameState, playerIndex, [5, 2, 10, 5, 1.5])
+    return evaluateByOpponents(gameState, playerIndex, [5, 2, 10, 5, 1.5])
 
 
 #the evaluation fed to H-Mnimax
-def evaluate(gameState, playerIndex, weights):
+def evaluateByOpponents(gameState, playerIndex, weights):
     myScore = heuristic(gameState, playerIndex, weights)
 
     opponentScores = []

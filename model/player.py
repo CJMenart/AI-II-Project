@@ -156,6 +156,7 @@ class Player:
         passTurn = copy.deepcopy(gameState)
         passTurn.turn.currentPlayer = passTurn.nextPlayer()
         passTurn.turn.turnState = TurnState.DIE_ROLL
+        passTurn.turn.turnNumber += 1
         possibleNextStates.append(passTurn)
 
         #can you trade 4 resources to the bank to get a resource of your choice

@@ -53,7 +53,7 @@ def simulateDieRoll(gameState):
 def simulateDecision(gameState):
     ## HMin functions return both heuristic evals and state. We take [1] because here we
     #only want state.
-    return IHM(gameState, 2)[1]
+    return IHM(gameState, 1)[1]
 
 def skipToGoodPart(**kwargs):
     game = newGame(**kwargs)
@@ -68,8 +68,8 @@ def skipToGoodPart(**kwargs):
     for player in game.players:
         #print player.resources
         for resource in ResourceType:
-            player.resources[resource] += 5
-        assert player.resources[ResourceType.WOOL] >= 5
+            player.resources[resource] += 0
+        assert player.resources[ResourceType.WOOL] >= 0
         #player.resources[ResourceType.WOOL] = 5
         #player.resources[ResourceType.BRICK] = 5
         #player.resources[ResourceType.ORE] = 5
@@ -85,7 +85,8 @@ def simulateQuickGame():
     while max(vps) < 10: #game.players[0].vp(game), game.players[1].vp(game), game.players[2].vp(game)) < 10:
         game = simulateTurn(game)
         vps = [p.vp(game) for p in game.players]
-        print("Points: ", vps) #game.players[0].vp(game), \
+        print("Turn ", game.turn.turnNumber, " ,", game.turn.turnState)
+        #print("Points: ", vps) #game.players[0].vp(game), \
         #      game.players[1].vp(game), game.players[2].vp(game))
     print("Game Won!")
     print("Points: ", vps) #game.players[0].vp(game), \

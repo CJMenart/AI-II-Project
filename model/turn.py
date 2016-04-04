@@ -7,6 +7,8 @@ class TurnState(Enum):
     MOVE_ROBBER = 4
 
 class Turn:
-    def __init__(self, turnState, currentPlayer):
+    def __init__(self, turnState, currentPlayer, turnNumber):
         self.turnState = turnState
         self.currentPlayer = currentPlayer
+        self.turnNumber = turnNumber
+        

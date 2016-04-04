@@ -96,6 +96,8 @@ class GameState:
                         newState.turn.currentPlayer = newState.nextPlayer()
                     #else:
                         #newState.turn.currentPlayer = newState.turn.currentPlayer
+
+                    newState.turn.turnNumber += 1
                     
                     newStates.append(newState)
                                     
@@ -215,7 +217,7 @@ def newGame(nPlayers=3):
     #for self.resources
     #{ResourceType.WOOL:0, ResourceType.BRICK:0, ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}))
 
-    #construct the turn data with a randomly-selected player
-    turn = Turn(TurnState.INITIAL_PLACEMENT, 0)
+    #construct the turn data with an arbitrarily-selected player
+    turn = Turn(TurnState.INITIAL_PLACEMENT, 0, 0)
     
     return GameState(spaces, players, roads, settlements, robberPos, turn)
