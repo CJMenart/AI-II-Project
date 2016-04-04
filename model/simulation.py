@@ -6,14 +6,22 @@ import random
 
 def simulateTurn(gameState):
     if (gameState.turn.turnState == TurnState.DIE_ROLL):
-        return simulateDieRoll(gameState)
+        return simulateDieRoll(gameState)[0]
     else:
         return simulateDecision(gameState)
 
+def simulateTurnExplain(gameState): # returns (new game state, what happened)
+    if (gameState.turn.turnState == TurnState.DIE_ROLL):
+        return simulateDieRoll(gameState)
+    else:
+        ts = gameState.turn.turnState
+        return (simulateDecision(gameState), ts)
 
 def simulateDieRoll(gameState):
     states = gameState.getPossibleNextStates()
-    roll = random.randint(1,6) + random.randint(1,6)
+    r1 = random.randint(1,6)
+    r2 = random.randint(1,6)
+    roll = r1 + r2
     #if roll == 2:
     #    return states[0]
     #elif roll == 3:
@@ -38,11 +46,12 @@ def simulateDieRoll(gameState):
     #    return states[10]
     #else:
     #    return -1 #error
-    stateIdx = roll - 2 + (5 if roll==7 else (1 if roll > 7 else 0))
+    stateIdx = roll - 3 + (6 if roll==7 else (1 if roll < 7 else 0))
     ## TODO: factor a roll-specific version out of gameState.getPossibleNextStates() to not waste time making and modifiying 9 extra gameState copies!
-    return states[stateIdx]
+    return (states[stateIdx], (r1, r2))
 
 def simulateDecision(gameState):
+    ## TODO: why [1] ?
     return IHM(gameState, 2)[1]
 
 def skipToGoodPart(**kwargs):

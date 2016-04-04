@@ -18,13 +18,15 @@ from settlement import *
 #from turn import *
 from resource import *
 from player import Player
+from simulation import skipToGoodPart, simulateTurnExplain
 
 no_vectorize = False
 no_layout_code = False
 orientation_pointy = True
 debug_coordinates = True
-fake_roads = True
-fake_settlements = True
+fake_roads = False
+fake_settlements = False
+skip_to_good_part = True
 
 # This class and 60% of its top 3 functions are from stackoverflow.
 # The remainder is original.
@@ -248,6 +250,9 @@ class View:
     nPlayers = len(game.players)
     self.hand_positions = [None] * nPlayers
     self.hand_text = [None] * nPlayers
+    self.explain_position = (5, 5)
+    self.explain_text = None
+
     tk = Tk()
     self.tk = tk
 
@@ -310,11 +315,15 @@ class View:
               break
 
   def next_turn(self):
-      print "The next_turn() function needs to be implemented!"
-      # [ have the next player perform their turn here ]
-      self.view(self.game)
+      gameExplain = simulateTurnExplain(self.game)
 
-  def first_time_view(self, game):
+      self.game = gameExplain[0]
+      self.first_time_view(*gameExplain)
+
+  def first_time_view(self, game, *args):
+    for w in self.board.children.values():
+        w.destroy()
+
     randomColors = ['blue', 'red', 'green', 'yellow', 'cyan', 'teal', 'silver', 'white', 'gray']
 
     if False:
@@ -337,9 +346,9 @@ class View:
 
         self.board.setRobber(game.robberPos)
 
-        self.view(game)
+        self.view(game, *args)
 
-  def view(self, game):
+  def view(self, game, explain=None):
         nPlayers = len(game.players)
 
         # Just as a test, display fake roads when there aren't any            
@@ -375,8 +384,18 @@ class View:
             text = "id {0}\nWOOL: {1}\nBRICK: {2}\nORE: {3}\nLUMBER: {4}\nGRAIN: {5}".format(p.playerId, p.resources[ResourceType.WOOL], p.resources[ResourceType.BRICK], p.resources[ResourceType.ORE], p.resources[ResourceType.LUMBER], p.resources[ResourceType.GRAIN])
             self.hand_text[i] = self.board.create_text(self.hand_positions[i], text=text)
 
+        if self.explain_text:
+            self.board.delete(self.explain_text)
+        if explain:
+            if isinstance(explain, tuple):
+                explain = "Roll: {0}, {1}".format(*explain)
+            else:
+                explain = str(explain)
+            self.explain_text = self.board.create_text(self.explain_position, text=explain, anchor=NW)
+
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        View(GameState.newGame(int(sys.argv[1])))
+    args = map(int, sys.argv[1:])
+    if skip_to_good_part:
+        View(skipToGoodPart(*args))
     else:
-        View(GameState.newGame())
+        View(GameState.newGame(*args))

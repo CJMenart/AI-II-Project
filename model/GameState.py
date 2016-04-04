@@ -7,14 +7,14 @@ from player import Player
 from road import *
 import copy
 
-#anything in this file can still be refactored and shufled around. Just
+#anything in this file can still be refactored and shuffled around. Just
 #trying to sort things out
 
 class GameState:
     #Tentative data members:
     #spaces: grid keeping track of hex types/numbers
     #players: list of structures with info like hands, color, etc.
-    #peices: list of wooden peices like settlements, roads, with
+    #pieces: list of wooden pieces like settlements, roads, with
     #       their positions
     #Turn: info specifying at what point in time of gameplay we're at.
     
@@ -32,8 +32,8 @@ class GameState:
     #gets child nodes on down the H-Minimax graph
     #Note that unlike in Chess or Go, the nodes here proceed at an uneven rate. Along
     #some search branches, therefore, five turns may have progressed, while only three
-    #have progressed on another branch. This mainly occured because of the robber. BUt
-    #the actual build options of the players turn were also coded according to a lens
+    #have progressed on another branch. This mainly occured because of the robber. But
+    #the actual build options of a player's turn were  also coded according to a lens
     #where the number of decision points varies. I haven't yet determined if that's a
     #serious issue.
     def getPossibleNextStates(self):
@@ -45,7 +45,7 @@ class GameState:
                 newState.turn.turnState = TurnState.PLAYER_ACTIONS
                 for settlement in newState.settlements:
                     for point in [settlement.adjHex1, settlement.adjHex2,settlement.adjHex3]:
-                        if point.isOnBoard() and newState.spaces[point.x][point.y].dieNumber == num:
+                        if point.isOnBoard() and newState.spaces[point.x][point.y].dieNumber == num and point != newState.robberPos: # the tile with the robber on it does not produce!
                             newState.getPlayerByIndex(settlement.owner).addResource(
                                 newState.spaces[point.x][point.y].resourceTypeProduced(),
                                 2 if settlement.isCity else 1)
@@ -63,6 +63,7 @@ class GameState:
             for settlement in self.players[self.turn.currentPlayer].openSettlementLocations(self):
                 #do we also need to make a deep copy of 'settlement'?
                 #in theory, we're never going to modify it...
+                #(except if we upgrade it!!!)
                 onBoard1 = settlement.adjHex1.isOnBoard()
                 onBoard2 = settlement.adjHex2.isOnBoard()
                 onBoard3 = settlement.adjHex3.isOnBoard()
@@ -80,8 +81,8 @@ class GameState:
                     newState.settlements.append(settlement)
                     newState.roads.append(road)
 
-                    #when they place their secnod settlement, a player gets resources
-                    if len(newState.settlements) >= len(newState.players):
+                    #when they place their second settlement, a player gets resources
+                    if len(newState.settlements) > len(newState.players): # if >=, last player gets resources from both initial settlements!
                         for adjHex in {settlement.adjHex1, settlement.adjHex2, settlement.adjHex3}:
                             if adjHex.isOnBoard() and newState.spaces[adjHex.x][adjHex.y].tileType != TileType.DESERT:
                                 newState.players[newState.turn.currentPlayer].\
@@ -91,10 +92,10 @@ class GameState:
                         newState.turn.turnState = TurnState.DIE_ROLL
                     elif len(newState.settlements) > len(newState.players):
                         newState.turn.currentPlayer = newState.previousPlayer()
-                    elif len(newState.settlements) == len(newState.players):
-                        newState.turn.currentPlayer = newState.turn.currentPlayer
-                    else:
+                    elif len(newState.settlements) != len(newState.players):
                         newState.turn.currentPlayer = newState.nextPlayer()
+                    #else:
+                        #newState.turn.currentPlayer = newState.turn.currentPlayer
                     
                     newStates.append(newState)
                                     
@@ -139,13 +140,13 @@ class GameState:
     def nextPlayer(self):
         index = self.turn.currentPlayer + 1
         if index >= len(self.players):
-            index = index - len(self.players)
+            index -= len(self.players)
         return index
 
     def previousPlayer(self):
         index = self.turn.currentPlayer - 1
         if index < 0:
-            index = index + len(self.players)
+            index += len(self.players)
         return index
 
     def getPlayerByIndex(self, index):
@@ -206,9 +207,10 @@ def newGame(nPlayers=3):
 
     #initialize players...and then
     players = []
-    for player in range(0,nPlayers):
-        players.append(Player(player, {ResourceType.WOOL:0, ResourceType.BRICK:0,
-                                       ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}))
+    dict_args = zip(ResourceType, [0]*len(ResourceType))
+#    print dict(dict_args)
+    for player_id in range(0,nPlayers):
+        players.append(Player(player_id, dict(dict_args)))#{ResourceType.WOOL:0, ResourceType.BRICK:0, ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}))
 
     #construct the turn data with a randomly-selected player
     turn = Turn(TurnState.INITIAL_PLACEMENT, 0)
