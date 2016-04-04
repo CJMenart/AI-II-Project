@@ -40,6 +40,7 @@ def hMin (gameState, depth, multithread = True):
                             multithread=multithreadNextLevel), nextStates)
         for tup in hTuples:
             values.append(tup[0])
+        pool.close()
     elif depth > 1 and not multithread:
         for state in nextStates:
             values.append(hMin(state, depth-1)[0])
