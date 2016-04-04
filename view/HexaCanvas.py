@@ -131,7 +131,7 @@ class HexaCanvas(Canvas):
             self.create_line(point5, point6, fill=color5, width=2)
             self.create_line(point6, point1, fill=color6, width=2)
         else:
-	    for i in range(len(points)):
+            for i in range(len(points)):
                 self.create_line(points[i], points[(i+1)%6], fill=colors[i], width=2)
                 #self.create_text(layout.pix_avg(points[i], points[(i+1)%6]), text="{0}".format(i))
 

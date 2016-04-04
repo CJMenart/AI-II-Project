@@ -15,7 +15,7 @@ def IHM(gameState, timeLimit):
     for depth in range(1,20):
         print("Depth: ", depth)
         timestamp = time.clock()
-        (hVal, newState) = hMin(gameState, gameState.turn.turnNumber+depth)
+        (hVal, newState) = hMinOld(gameState, depth)
         if (time.clock() - timestamp >= timeLimit):
             return(hVal, newState)
 
