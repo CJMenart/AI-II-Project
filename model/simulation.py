@@ -59,12 +59,12 @@ def skipToGoodPart(**kwargs):
     game = newGame(**kwargs)
     ## States here are arbitrary, to get past the portion of the game that thus far
     #  is still prohibitively slow
-    game = game.getPossibleNextStates()[6]
-    game = game.getPossibleNextStates()[8]
-    game = game.getPossibleNextStates()[10]
-    game = game.getPossibleNextStates()[12]
-    game = game.getPossibleNextStates()[14]
+    game = game.getPossibleNextStates()[13]
     game = game.getPossibleNextStates()[16]
+    game = game.getPossibleNextStates()[29]
+    game = game.getPossibleNextStates()[42]
+    game = game.getPossibleNextStates()[55]
+    game = game.getPossibleNextStates()[68]
     for player in game.players:
         #print player.resources
         for resource in ResourceType:

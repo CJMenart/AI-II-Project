@@ -18,7 +18,7 @@ class Player:
     def __init__(self, inputPlayerId, resources = {ResourceType.WOOL: 0 , ResourceType.BRICK:0, \
                 ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}  ):
         self.playerId = inputPlayerId
-        self.resources = resources
+        self.resources =copy.deepcopy(resources)
         #below: what a basic player with an empty hand looks like
         #self.resources = {ResourceType.WOOL: 0 , ResourceType.BRICK:0,
         #ResourceType.ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0}
