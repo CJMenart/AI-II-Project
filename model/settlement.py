@@ -15,8 +15,8 @@ class Settlement:
 
     def __eq__(self, other): 
         return (self.adjHex1 in [other.adjHex1, other.adjHex2, other.adjHex3] and \
-                    self.adjHex1 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
-                    self.adjHex1 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
+                    self.adjHex2 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
+                    self.adjHex3 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
                     True if self.owner <0 else self.owner == other.owner)
     
     def __str__(self):
@@ -31,17 +31,13 @@ class Settlement:
     def adjacentOrCloser(self, s2):
         adjacencies = 0
 
-        if (self.adjHex1 == s2.adjHex1):
+        s2Hexes = {s2.adjHex1, s2.adjHex2, s2.adjHex3}
+
+        if (self.adjHex1 in s2Hexes):
             adjacencies += 1
-        if (self.adjHex1 == s2.adjHex2):
+        if (self.adjHex2 in s2Hexes):
             adjacencies += 1
-        if (self.adjHex1 == s2.adjHex3):
-            adjacencies += 1
-        if (self.adjHex2 == s2.adjHex2):
-            adjacencies += 1
-        if (self.adjHex2 == s2.adjHex3):
-            adjacencies += 1
-        if (self.adjHex3 == s2.adjHex3):
+        if (self.adjHex3 in s2Hexes):
             adjacencies += 1
         
         return adjacencies >= 2

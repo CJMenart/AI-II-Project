@@ -6,7 +6,7 @@
 #clear which is which. Possibly this should be addressed and refactored,
 #but I've been refactoring all day, so I'm not changing it now...
 
-from enum import Enum
+#from enum import Enum
 from resource import *
 from point import *
 from settlement import *
@@ -56,6 +56,20 @@ class Player:
             if s.owner == self.playerId:
                 playerSettlements.append(s)
         return playerSettlements
+
+    def numBasicSettlements(self, gameState):
+        num = 0
+        for settlement in self.settlements(gameState):
+            if not settlement.isCity:
+                num += 1
+        return num
+
+    def numCities(self, gameState):
+        num = 0
+        for settlement in self.settlements(gameState):
+            if settlement.isCity:
+                num += 1
+        return num
 
     #returns a list of roads
     #may return duplicates
@@ -107,11 +121,12 @@ class Player:
     def openSettlementLocations(self, gameState):
         openLocations = []
         for basePoint in pointsOnBoard():
-            for point2 in basePoint.allAdjacentPoints():
+            basePointNbors = basePoint.allAdjacentPoints()
+            for point2 in basePointNbors:
                 for point3 in [val for val in \
-                                basePoint.allAdjacentPoints() if \
+                                basePointNbors if \
                                 val in point2.allAdjacentPoints()]:
-                    settlement = Settlement(basePoint, point2, point3, gameState.getPlayerIndex(self))
+                    settlement = Settlement(basePoint, point2, point3, self.playerId)
                     #check whether an existing settlement is in the same
                     #space or adjacent
                     legalPlacement = True
@@ -120,7 +135,7 @@ class Player:
                             legalPlacement = False
                     if legalPlacement:
                         openLocations.append(settlement)
-        return openLocations                            
+        return openLocations
 
     
     # get a list of available settlements that the player could build
@@ -149,6 +164,7 @@ class Player:
         passTurn = copy.deepcopy(gameState)
         passTurn.turn.currentPlayer = passTurn.nextPlayer()
         passTurn.turn.turnState = TurnState.DIE_ROLL
+        passTurn.turn.turnNumber += 1
         possibleNextStates.append(passTurn)
 
         #can you trade 4 resources to the bank to get a resource of your choice
@@ -156,8 +172,8 @@ class Player:
             if self.resources[fromIndex] >= 4:
                 for toIndex in [i for i in ResourceType if i != fromIndex]:
                     traded = copy.deepcopy(gameState)
-                    traded.players[traded.currentPlayer].resources[fromIndex] -= 4
-                    traded.players[traded.currentPlayer].resources[toIndex] += 1
+                    traded.getPlayerByIndex(traded.turn.currentPlayer).resources[fromIndex] -= 4
+                    traded.getPlayerByIndex(traded.turn.currentPlayer).resources[toIndex] += 1
                     possibleNextStates.append(traded)
         
         #can you build a road?
@@ -166,32 +182,32 @@ class Player:
             for road in self.availableRoads(gameState):
                 builtRoad = copy.deepcopy(gameState)
                 builtRoad.roads.append(road)
-                builtRoad.players[builtRoad.turn.currentPlayer].resources[ResourceType.BRICK] -= 1
-                builtRoad.players[builtRoad.turn.currentPlayer].resources[ResourceType.LUMBER] -= 1
+                builtRoad.getPlayerByIndex(builtRoad.turn.currentPlayer).resources[ResourceType.BRICK] -= 1
+                builtRoad.getPlayerByIndex(builtRoad.turn.currentPlayer).resources[ResourceType.LUMBER] -= 1
                 possibleNextStates.append(builtRoad)
         #can you build a settlement?
         if self.resources[ResourceType.BRICK] >= 1 and \
                self.resources[ResourceType.LUMBER] >= 1 and \
                self.resources[ResourceType.WOOL] >= 1 and \
-               self.resources[ResourceType.GRAIN] >= 1:
+               self.resources[ResourceType.GRAIN] >= 1 and self.numBasicSettlements(gameState) < 5:
             for settlement in self.availableSettlements(gameState):
                 builtSettlement = copy.deepcopy(gameState)
-                builtSettlement.settlement.append(Settlement)
-                builtSettlement.players[builtSettlement.turn.currentPlayer].resources[ResourceType.BRICK] -= 1
-                builtSettlement.players[builtSettlement.turn.currentPlayer].resources[ResourceType.LUMBER] -= 1
-                builtSettlement.players[builtSettlement.turn.currentPlayer].resources[ResourceType.WOOL] -= 1
-                builtSettlement.players[builtSettlement.turn.currentPlayer].resources[ResourceType.GRAIN] -= 1
+                builtSettlement.settlements.append(settlement)
+                builtSettlement.getPlayerByIndex(builtSettlement.turn.currentPlayer).resources[ResourceType.BRICK] -= 1
+                builtSettlement.getPlayerByIndex(builtSettlement.turn.currentPlayer).resources[ResourceType.LUMBER] -= 1
+                builtSettlement.getPlayerByIndex(builtSettlement.turn.currentPlayer).resources[ResourceType.WOOL] -= 1
+                builtSettlement.getPlayerByIndex(builtSettlement.turn.currentPlayer).resources[ResourceType.GRAIN] -= 1
                 possibleNextStates.append(builtSettlement)
         #can you build a city?
         if self.resources[ResourceType.GRAIN] >= 2 and \
-                   self.resources[ResourceType.ORE] >= 3:
+                   self.resources[ResourceType.ORE] >= 3 and self.numCities(gameState) < 4:
             for settlement in self.settlements(gameState):
                 if settlement.isCity == False:
                     builtCity = copy.deepcopy(gameState)
-                    next([settlementToUpgrade for val in builtCity.settlements if \
-                             val == settlement]).isCity = True
-                    builtCity.players[builtCity.turn.currentPlayer].resources[ResourcesType.GRAIN] -= 2
-                    builtCity.players[builtCity.turn.currentPlayer].resources[ResourcesType.ORE] -= 3
+                    next(settlementToUpgrade for settlementToUpgrade in builtCity.settlements if \
+                             settlementToUpgrade == settlement).isCity = True
+                    builtCity.getPlayerByIndex(builtCity.turn.currentPlayer).resources[ResourceType.GRAIN] -= 2
+                    builtCity.getPlayerByIndex(builtCity.turn.currentPlayer).resources[ResourceType.ORE] -= 3
                     possibleNextStates.append(builtCity)
         return possibleNextStates
 
