@@ -77,7 +77,7 @@ class Player:
         openLocations = []
         for basePoint in pointsOnBoard():
             for point2 in basePoint.allAdjacentPoints():
-                road = Road(basePoint, point2, gameState.getPlayerIndex(self))
+                road = Road(basePoint, point2, self.playerId)
                 legalPlacement = True
                 for existingRoad in gameState.roads:
                     if road.sameLocationAs(existingRoad):
