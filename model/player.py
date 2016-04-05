@@ -126,12 +126,20 @@ class Player:
     # get a list of available settlements that the player could build
     def availableSettlements(self, gameState):
         buildableSettlements = []
+        '''
         for settlement in self.openSettlementLocations(gameState):
             for road in self.roads(gameState):
                 if road.adjHex1 in {settlement.adjHex1, settlement.adjHex2, settlement.adjHex3} and \
                         road.adjHex2 in {settlement.adjHex1, settlement.adjHex2, settlement.adjHex3}:
                     buildableSettlements.append(settlement)
                     break
+        '''
+        for r in self.roads(gameState):
+            for s in Settlement.adjacentSettlementsByRoad(r):
+                # check if duplicate,violate with existing settle, or adjacent to existing settlements
+                if s not in buildableSettlements and s not in gameState.settlements and \
+                        s not in [item for sublist in list(map(lambda x:x.adjacentSettlements(),gameState.settlements)) for item in sublist]: 
+                    buildableSettlements.append(s)
         return buildableSettlements
 
     #returns the child nodes of a GameState in which this player takes zero or one build options

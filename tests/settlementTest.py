@@ -11,6 +11,7 @@ from road import Road
 from point import Point
 from settlement import Settlement
 
+
 class TestSettlement(unittest.TestCase):
 
     def setUp(self):
@@ -31,6 +32,35 @@ class TestSettlement(unittest.TestCase):
         self.assertIn(Road(Point(1,1), Point(1,2), -1),adjRoads)
         self.assertIn(Road(Point(1,2), Point(2,2), -1),adjRoads)
         self.assertEqual(3, len(adjRoads))
+
+    def test_adjacentSettlementsByRoad_10_11(self): 
+        r = Road(Point(1,0), Point(1,1), 1)   
+        adjSettlements = Settlement.adjacentSettlementsByRoad(r)   
+        self.assertIn(Settlement(Point(0,1), Point(1,0), Point(1,1), -1), \
+                          adjSettlements)  
+        self.assertIn(Settlement(Point(2,0), Point(1,0), Point(1,1), -1), \
+                          adjSettlements)   
+        self.assertEqual(len(adjSettlements), 2)
+
+    def test_adjacentSettlementsByRoad_11_21(self):
+        r = Road(Point(1,1), Point(2,1), 1)
+        adjSettlements = Settlement.adjacentSettlementsByRoad(r)
+        self.assertIn(Settlement(Point(1,1), Point(2,1), Point(1,2), -1), \
+                          adjSettlements)
+        self.assertIn(Settlement(Point(1,1), Point(2,1), Point(2,0), -1), \
+                          adjSettlements)
+        self.assertEqual(len(adjSettlements), 2)
+
+    def test_adjacentSettlements_11_20_21(self):
+        s = Settlement(Point(1,1), Point(2,0), Point(2,1), 1)
+        adjSettlements = s.adjacentSettlements()
+        self.assertIn(Settlement(Point(1,1), Point(2,0), Point(1,0), -1), \
+                          adjSettlements)
+        self.assertIn(Settlement(Point(1,1), Point(2,1), Point(1,2), -1), \
+                          adjSettlements)
+        self.assertIn(Settlement(Point(2,0), Point(2,1), Point(3,0), -1), \
+                          adjSettlements)
+        self.assertEqual(len(adjSettlements), 3)
 
 if __name__ == '__main__':
     unittest.main()

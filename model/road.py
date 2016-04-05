@@ -39,7 +39,7 @@ class Road:
             return False
 
     def adjacentRoads(self):
-        # take intersection of two adjacent Points set will two close points
+        # take intersection of two adjacent Points set will get two close points
         adjHex1adjPoints = self.adjHex1.allAdjacentPoints()
         adjHex2adjPoints = self.adjHex2.allAdjacentPoints()
         twoClosePoints = list(set(adjHex1adjPoints).intersection(adjHex2adjPoints))
@@ -48,3 +48,6 @@ class Road:
                     Road(twoClosePoints[0], self.adjHex2, -1), \
                     Road(twoClosePoints[1], self.adjHex1, -1), \
                     Road(twoClosePoints[1], self.adjHex2, -1)]
+
+
+

@@ -16,12 +16,47 @@ class TestPlayer(unittest.TestCase):
     def setUp(self):
         self.r = Road(Point(1,2), Point(2,2), 1)
 
-    def test_adjacentRoads(self):
+    def test_adjacentRoads_1_2_and_2_2(self):
         self.r = Road(Point(1,2), Point(2,2), 1)
         adjRoads = self.r.adjacentRoads()
         #for r in adjRoads: 
         #    print(r)
         self.assertIn(Road(Point(1,2), Point(1,1), -1), adjRoads)
+        self.assertIn(Road(Point(2,2), Point(1,1), -1), adjRoads)
+        self.assertIn(Road(Point(1,2), Point(2,3), -1), adjRoads)
+        self.assertIn(Road(Point(2,2), Point(2,3), -1), adjRoads)
+        self.assertEqual(len(adjRoads), 4)
+
+    def test_adjacentRoads_1_2_and_2_3(self):
+        self.r = Road(Point(1,2), Point(2,3), 1)
+        adjRoads = self.r.adjacentRoads()
+                                                       
+        self.assertIn(Road(Point(1,2), Point(2,2), -1), adjRoads)
+        self.assertIn(Road(Point(2,3), Point(1,3), -1), adjRoads)
+        self.assertIn(Road(Point(1,2), Point(2,2), -1), adjRoads)
+        self.assertIn(Road(Point(2,3), Point(1,3), -1), adjRoads)
+        self.assertEqual(len(adjRoads), 4)
+
+    def test_adjacentRoads_2_2_and_2_3(self):
+        self.r = Road(Point(2,2), Point(2,3), 1)
+        adjRoads = self.r.adjacentRoads()
+        
+        self.assertIn(Road(Point(2,2), Point(1,2), -1), adjRoads)
+        self.assertIn(Road(Point(2,3), Point(3,2), -1), adjRoads)
+        self.assertIn(Road(Point(2,2), Point(1,2), -1), adjRoads)
+        self.assertIn(Road(Point(2,3), Point(3,2), -1), adjRoads)
+        self.assertEqual(len(adjRoads), 4)
+
+    def test_adjacentSettlements_10_11(self):
+        self.r = Road(Point(1,0), Point(1,1), 1)
+        self.s = Settlement(Point(0,1), Point(1,0), Point(1,1), -1)
+        adjSettlements = self.r.adjacentSettlements()
+        #self.s = Settlement(Point(0,1), Point(1,0), Point(1,1), -1)
+        for s in adjSettlements:
+            print(s)
+        self.assertIn(Settlement(Point(0,1), Point(1,0), Point(1,1), -1), adjSettlements)
+        self.assertIn(Settlement(Point(2,0), Point(1,0), Point(1,1), -1), adjSettlements)
+        self.assertEqual(len(adjSettlements), 0)
 
 if __name__ == '__main__':
     unittest.main()

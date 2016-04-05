@@ -1,5 +1,6 @@
 from point import *
-from road import Road
+from road import *
+
 
 class Settlement:
     def __init__(self, adjHex1, adjHex2, adjHex3, owner):
@@ -16,7 +17,11 @@ class Settlement:
         return (self.adjHex1 in [other.adjHex1, other.adjHex2, other.adjHex3] and \
                     self.adjHex1 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
                     self.adjHex1 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
-                    self.owner == other.owner)
+                    True if self.owner <0 else self.owner == other.owner)
+    
+    def __str__(self):
+        return ("adjHex1: {0}, adjHex2: {1}, adjHex3: {2} owner: {3}".format( \
+                self.adjHex1, self.adjHex2, self.adjHex3, self.owner))
 
     def isOnBoard(self):
         return self.adjHex1.isOnBoard() or \
@@ -46,3 +51,20 @@ class Settlement:
                     Road(self.adjHex1, self.adjHex3, -1), \
                     Road(self.adjHex2, self.adjHex3, -1)]
 
+    def adjacentSettlements(self):
+        adjRoads = self.adjacentRoads()
+        adjSettlements = []
+        for r in adjRoads: 
+            for s in Settlement.adjacentSettlementsByRoad(r): 
+                if ((s not in adjSettlements) and (s != self)): 
+                    adjSettlements.append(s)
+        return adjSettlements
+
+    @classmethod
+    def adjacentSettlementsByRoad(cls, road):
+        # take intersection of two adjacent Points set will get two close points                 
+        adjHex1adjPoints = road.adjHex1.allAdjacentPoints()
+        adjHex2adjPoints = road.adjHex2.allAdjacentPoints()
+        twoClosePoints = list(set(adjHex1adjPoints).intersection(adjHex2adjPoints))
+        return [Settlement(twoClosePoints[0], road.adjHex1, road.adjHex2, -1), \
+                   Settlement(twoClosePoints[1], road.adjHex1, road.adjHex2, -1)]

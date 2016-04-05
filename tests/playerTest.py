@@ -71,13 +71,13 @@ ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0} )
         self.assertEqual(self.player.settlements(gameState)[0], \
                              Settlement(Point(0,0), Point(0,1), Point(1,0), 1))
 
-    def test_one_corner_settlement_available_roads_1_0_and_2_1_and_1_1(self):
-        gameState = GameState([], [Player(1)], [], [Settlement(Point(1,0), Point(2,1),\
+    def test_one_corner_settlement_available_roads_1_0_and_2_0_and_1_1(self):
+        gameState = GameState([], [Player(1)], [], [Settlement(Point(1,0), Point(2,0),\
                                Point(1,1), 1)], [], [])
         availableRoads = gameState.players[0].availableRoads(gameState)
-        self.assertIn(Road(Point(1,0),Point(2,1),-1 ), availableRoads)
         self.assertIn(Road(Point(1,0),Point(1,1),-1 ), availableRoads)
-        self.assertIn(Road(Point(1,1),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,0),Point(2,0),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,1),Point(2,0),-1 ), availableRoads)
         self.assertEqual(len(availableRoads), 3)
 
     def test_one_corner_settlement_available_roads_1_0_and_0_1_and_1_1(self):
@@ -88,65 +88,104 @@ ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0} )
         self.assertIn(Road(Point(1,0),Point(1,1),-1 ), availableRoads)
         self.assertEqual(len(availableRoads), 2)
 
-    def test_one_corner_settlement_available_roads_m1_1_and_0_1_and_0_2(self):
-        gameState = GameState([], [Player(1)], [], [Settlement(Point(-1,1), Point(0,1),\
-                               Point(0,2), 1)], [], [])
+    def test_one_corner_settlement_available_roads_1_1_and_0_1_and_1_0(self):
+        gameState = GameState([], [Player(1)], [], [Settlement(Point(1,1), Point(0,1),\
+                               Point(1,0), 1)], [], [])
         availableRoads = gameState.players[0].availableRoads(gameState)
-        self.assertIn(Road(Point(0,1),Point(0,2),-1 ), availableRoads)
-        self.assertIn(Road(Point(-1,1),Point(0,2),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,1),Point(0,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,1),Point(1,0),-1 ), availableRoads)
         self.assertEqual(len(availableRoads), 2)
 
-    def test_one_settlement_available_roads_2_2_and_2_1_and_1_1(self):
+    def test_one_settlement_available_roads_2_2_and_2_1_and_1_2(self):
         gameState = GameState([], [Player(1)], [], [Settlement(Point(2,2), Point(2,1),\
-                               Point(1,1), 1)], [], [])
+                               Point(1,2), 1)], [], [])
         availableRoads = gameState.players[0].availableRoads(gameState)
         self.assertIn(Road(Point(2,2),Point(2,1),-1 ), availableRoads)
-        self.assertIn(Road(Point(2,2),Point(1,1),-1 ), availableRoads)
-        self.assertIn(Road(Point(1,1),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(2,2),Point(1,2),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,2),Point(2,1),-1 ), availableRoads)
         self.assertEqual(len(availableRoads), 3)
 
-    def test_one_settlement_available_roads_2_2_and_2_1_and_1_1_built_road_22_and_21(self):
+    def test_one_settlement_available_roads_2_2_and_2_1_and_1_2_built_road_22_and_21(self):
         gameState = GameState([], [Player(1)], [Road(Point(2,2),Point(2,1), 1 )],\
                                   [Settlement(Point(2,2), Point(2,1),\
-                               Point(1,1), 1)], [], [])
+                               Point(1,2), 1)], [], [])
         availableRoads = gameState.players[0].availableRoads(gameState)
         #self.assertIn(Road(Point(2,2),Point(2,1),-1 ), availableRoads)
-        self.assertIn(Road(Point(2,2),Point(1,1),-1 ), availableRoads)
-        self.assertIn(Road(Point(1,1),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(2,2),Point(1,2),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,2),Point(2,1),-1 ), availableRoads)
         self.assertIn(Road(Point(2,1),Point(3,1),-1 ), availableRoads)
         self.assertIn(Road(Point(2,2),Point(3,1),-1 ), availableRoads)
         self.assertEqual(len(availableRoads), 4)
 
-    def test_one_settlement_available_roads_2_2_and_2_1_and_1_1_built_all_roads(self):
+    def test_one_settlement_available_roads_2_2_and_2_1_and_1_2_built_all_roads(self):
         setupRoads = [Road(Point(2,2),Point(2,1), 1 ), \
-                          Road(Point(2,2),Point(1,1),1 ), \
-                          Road(Point(1,1),Point(2,1),1 )]
+                          Road(Point(2,2),Point(1,2),1 ), \
+                          Road(Point(1,2),Point(2,1),1 )]
         gameState = GameState([], [Player(1)], setupRoads,\
                                   [Settlement(Point(2,2), Point(2,1),\
-                               Point(1,1), 1)], [], [])
+                               Point(1,2), 1)], [], [])
         #print('gameState len of setupRoads is {0} '.format(len(gameState.roads)))
         availableRoads = gameState.players[0].availableRoads(gameState)
-        self.assertIn(Road(Point(1,0),Point(1,1),-1 ), availableRoads)                   
-        self.assertIn(Road(Point(1,0),Point(2,1),-1 ), availableRoads)
-        self.assertIn(Road(Point(1,2),Point(1,1),-1 ), availableRoads)
-        self.assertIn(Road(Point(1,2),Point(2,2),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,1),Point(1,2),-1 ), availableRoads)                   
+        self.assertIn(Road(Point(1,1),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,3),Point(1,2),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,3),Point(2,2),-1 ), availableRoads)
         self.assertIn(Road(Point(3,1),Point(2,1),-1 ), availableRoads)
         self.assertIn(Road(Point(3,1),Point(2,2),-1 ), availableRoads)
         self.assertEqual(len(availableRoads), 6)
 
     def test_two_settlement_available_roads(self):
-        setupSettlement = [Settlement(Point(1,0), Point(2,1), Point(1,1), 1), \
+        setupSettlement = [Settlement(Point(1,0), Point(1,1), Point(2,0), 1), \
                                Settlement(Point(2,3), Point(3,3), Point(2,4), 1)]
         gameState = GameState([], [Player(1)], [], setupSettlement, [], [])
         availableRoads = gameState.players[0].availableRoads(gameState)
-        self.assertIn(Road(Point(1,0),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,0),Point(2,0),-1 ), availableRoads)
         self.assertIn(Road(Point(1,0),Point(1,1),-1 ), availableRoads)
-        self.assertIn(Road(Point(1,1),Point(2,1),-1 ), availableRoads)
+        self.assertIn(Road(Point(1,1),Point(2,0),-1 ), availableRoads)
         
         self.assertIn(Road(Point(2,3),Point(3,3),-1 ), availableRoads)
         self.assertIn(Road(Point(2,3),Point(2,4),-1 ), availableRoads)
         self.assertIn(Road(Point(3,3),Point(2,4),-1 ), availableRoads)
         self.assertEqual(len(availableRoads), 6)
+
+    def test_one_settlement_10_11_20_no_road_available_settlements(self):
+        setupSettlement = [Settlement(Point(1,0), Point(1,1), Point(2,0), 1)]
+        gameState = GameState([], [Player(1)], [], setupSettlement, [], [])
+        availableSettlements = gameState.players[0].availableSettlements(gameState)
+        self.assertEqual(len(availableSettlements), 0)
+
+    def test_one_settlement_10_11_20_one_road_11_20_available_settlements(self):
+        setupSettlement = [Settlement(Point(1,0), Point(1,1), Point(2,0), 1)]
+        setupRoad = [Road(Point(1,1), Point(2,0), 1)]
+        gameState = GameState([], [Player(1)], setupRoad, setupSettlement, [], [])
+        availableSettlements = gameState.players[0].availableSettlements(gameState)
+        self.assertEqual(len(availableSettlements), 0)
+
+    def test_one_settlement_10_11_20_two_road_11_20_and_20_21_available_settlements(self):
+        setupSettlement = [Settlement(Point(1,0), Point(1,1), Point(2,0), 1)]
+        setupRoad = [Road(Point(1,1), Point(2,0), 1), Road(Point(2,1), Point(2,0), 1)] 
+        gameState = GameState([], [Player(1)], setupRoad, setupSettlement, [], [])
+        availableSettlements = gameState.players[0].availableSettlements(gameState)
+        self.assertIn(Settlement(Point(2,0), Point(2,1), Point(3,0), -1), availableSettlements)
+        self.assertEqual(len(availableSettlements), 1)
+
+    def test_two_settlement_10_11_20_two_road_11_20_and_20_21_available_settlements(self):
+        setupSettlement = [Settlement(Point(1,0), Point(1,1), Point(2,0), 1), \
+                               Settlement(Point(2,0), Point(2,1), Point(3,0), 2)]
+        setupRoad = [Road(Point(1,1), Point(2,0), 1), Road(Point(2,1), Point(2,0), 1)]
+        gameState = GameState([], [Player(1)], setupRoad, setupSettlement, [], [])
+        availableSettlements = gameState.players[0].availableSettlements(gameState)
+        #self.assertIn(Settlement(Point(2,0), Point(2,1), Point(3,0), -1), availableSettlements)
+        self.assertEqual(len(availableSettlements), 0)
+
+    def test_two_settlement2_10_11_20_two_road_11_20_and_20_21_available_settlements(self):
+        setupSettlement = [Settlement(Point(1,0), Point(1,1), Point(2,0), 1), \
+                               Settlement(Point(2,1), Point(3,0), Point(3,1), 2)]
+        setupRoad = [Road(Point(1,1), Point(2,0), 1), Road(Point(2,1), Point(2,0), 1)]
+        gameState = GameState([], [Player(1)], setupRoad, setupSettlement, [], [])
+        availableSettlements = gameState.players[0].availableSettlements(gameState)
+        #self.assertIn(Settlement(Point(2,0), Point(2,1), Point(3,0), -1), availableSettlements)
+        self.assertEqual(len(availableSettlements), 0)
 
 if __name__ == '__main__':
     unittest.main()
