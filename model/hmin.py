@@ -16,6 +16,7 @@ def IHM(gameState, timeLimit):
         print("Depth: ", depth)
         timestamp = time.clock()
         (hVal, newState) = hMinOld(gameState, depth)
+        print("Returned from hMinOld.")
         if (time.clock() - timestamp >= timeLimit):
             return(hVal, newState)
 
@@ -79,21 +80,19 @@ def hMinOld (gameState, depth, multithread = True):
     nextStates = gameState.getPossibleNextStates()
     values = []
 
-    multithreadNextLevel = multithread and len(nextStates) < 3
-
     if depth == 1:
         for state in nextStates:
             values.append(defaultEvaluation(state, state.turn.currentPlayer))
     elif depth > 1 and multithread:
         pool = Pool(len(nextStates))
-        hTuples = pool.map(partial(hMin, depth = depth-1, \
-                            multithread=multithreadNextLevel), nextStates)
+        hTuples = pool.map(partial(hMinOld, depth = depth-1, \
+                            multithread=False), nextStates)
         for tup in hTuples:
             values.append(tup[0])
         pool.close()
     elif depth > 1 and not multithread:
         for state in nextStates:
-            values.append(hMin(state, depth-1)[0])
+            values.append(hMinOld(state, depth-1, False)[0])
     else:
         return -1 #error. Depth must be at least 1
 
