@@ -54,7 +54,7 @@ def simulateDecision(gameState):
     ## HMin functions return both heuristic evals and state. We take [1] because here we
     #only want state.
     print("Calling simulateDecision")
-    return IHM(gameState, 1)[1]
+    return hMinOld(gameState, 1)[1]
 
 def skipToGoodPart(**kwargs):
     game = newGame(**kwargs)
