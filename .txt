@@ -1,0 +1,60 @@
+commit 86d08f2ed0cab975a3b880514e1b4d508ec8c012
+tree abc518f1c1224b082a179b893ec206c22054022f
+parent 628ff3c22807c438d851bfc106fbc6c4ae404845
+author Christopher James Menart <reachamyquill@gmail.com> 1456527358 -0500
+committer Christopher James Menart <reachamyquill@gmail.com> 1456527358 -0500
+
+    Added a class to keep track of what part of the turn we're in. We'll
+    probably end up switch-casing off this to figure what possible next GameStates
+    are available. ~Chris M
+
+diff --git a/GameState.py b/GameState.py
+index fd0ad29..72edbba 100644
+--- a/GameState.py
++++ b/GameState.py
+@@ -64,6 +64,9 @@ def NewGame():
+                 #TODO: Enforce the rule about red numbers not being next
+                 #to each other. Is actually a very complex problem
+                 #and we may not care enough to deal with it
++                #We could even do the 'standard' setup version where
++                #both numbers and tiles are in fixed position.
++                #Might generate a slightly wonkier heuristic tho?
+                 tile = tileBag.next();
+                 if tile == TileType.DESERT:
+                     robberPos = Point(x,y)
+@@ -71,9 +74,19 @@ def NewGame():
+                 else:
+                     spaces[x,y] = Tile(tile, numberTokenBag.next())
+ 
++    #Game begins with no roads or settlements in play
++    peices = []
++
++    #initialize players...and then
++
++
++    #construct the turn data with a randomly-selected player
++    turn = Turn(TurnState.INITIAL_PLACEMENT, randPlayer)
++
++    
++    
+     return GameState(spaces, players, peices, robberPos, turn)
+ 
+-    #some stuff...and then
+ 
+     
+ 
+diff --git a/turn.py b/turn.py
+new file mode 100644
+index 0000000..d4fb430
+--- /dev/null
++++ b/turn.py
+@@ -0,0 +1,9 @@
++class TurnState(Enum):
++    DIE_ROLL = 1
++    PLAYER_ACTIONS = 2
++    INITIAL_PLACEMENT = 3
++
++class Turn:
++    def __init__(self, turnState, currentPlayer):
++        self.turnState = turnState
++        self.currentPlayer = currentPlayer
