@@ -56,6 +56,12 @@ class Settlement:
                     adjSettlements.append(s)
         return adjSettlements
 
+    def getSettlementWithOwner(self, id): 
+        if self.owner < 0 :
+            return Settlement(self.adjHex1, self.adjHex2, self.adjHex3, id)
+        else:
+            print("Error: attempting to change road owner")
+
     @classmethod
     def adjacentSettlementsByRoad(cls, road):
         # take intersection of two adjacent Points set will get two close points                 
