@@ -49,9 +49,5 @@ class Road:
                     Road(twoClosePoints[1], self.adjHex1, -1), \
                     Road(twoClosePoints[1], self.adjHex2, -1)]
 
-    def getRoadWithOwner(self, id):
-        if self.owner < 0 :
-            return Road(self.adjHex1, self.adjHex2, id)
-        else: 
-            print("Error: attempting to change road owner")
+
 

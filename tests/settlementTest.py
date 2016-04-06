@@ -62,5 +62,11 @@ class TestSettlement(unittest.TestCase):
                           adjSettlements)
         self.assertEqual(len(adjSettlements), 3)
 
+    def test_getSettlementWithOwner(self):
+        s = Settlement(Point(1,1), Point(2,0), Point(2,1), -1)
+        newOwnerId = 1
+        expectedResult = Settlement(Point(1,1), Point(2,0), Point(2,1), newOwnerId)
+        self.assertEqual(s.getSettlementWithOwner(newOwnerId), expectedResult)
+
 if __name__ == '__main__':
     unittest.main()

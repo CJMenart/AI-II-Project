@@ -181,7 +181,7 @@ class Player:
                self.resources[ResourceType.LUMBER] >= 1:
             for road in self.availableRoads(gameState):
                 builtRoad = copy.deepcopy(gameState)
-                builtRoad.roads.append(road)
+                builtRoad.roads.append(road.getRoadWithOwner(self.playerId))
                 builtRoad.getPlayerByIndex(builtRoad.turn.currentPlayer).resources[ResourceType.BRICK] -= 1
                 builtRoad.getPlayerByIndex(builtRoad.turn.currentPlayer).resources[ResourceType.LUMBER] -= 1
                 possibleNextStates.append(builtRoad)
@@ -192,7 +192,7 @@ class Player:
                self.resources[ResourceType.GRAIN] >= 1 and self.numBasicSettlements(gameState) < 5:
             for settlement in self.availableSettlements(gameState):
                 builtSettlement = copy.deepcopy(gameState)
-                builtSettlement.settlements.append(settlement)
+                builtSettlement.settlements.append(settlement.getSettlementWithOwner(self.playerId))
                 builtSettlement.getPlayerByIndex(builtSettlement.turn.currentPlayer).resources[ResourceType.BRICK] -= 1
                 builtSettlement.getPlayerByIndex(builtSettlement.turn.currentPlayer).resources[ResourceType.LUMBER] -= 1
                 builtSettlement.getPlayerByIndex(builtSettlement.turn.currentPlayer).resources[ResourceType.WOOL] -= 1
