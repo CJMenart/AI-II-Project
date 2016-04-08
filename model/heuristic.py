@@ -5,7 +5,7 @@ from player import *
 
 #uses a default set of weights
 def defaultEvaluation(gameState, playerIndex):
-    return evaluateByOpponents(gameState, playerIndex, [5, 2, 10, 5, 1.5])
+    return evaluateByOpponents(gameState, playerIndex, [5, 1, 10, 5, 1.5])
 
 
 #the evaluation fed to H-Mnimax

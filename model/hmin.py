@@ -14,19 +14,19 @@ def IHM(gameState, timeLimit):
 
     for depth in range(1,20):
         print("Depth: ", depth)
-        timestamp = time.clock()
-        (hVal, newState) = hMinOld(gameState, depth)
+        timestamp = time.time()
+        (hVal, newState) = hMinByDecision(gameState, depth)
         print("Returned from hMinOld.")
-        if (time.clock() - timestamp >= timeLimit):
+        if (time.time() - timestamp >= timeLimit):
             return(hVal, newState)
 
     return (hVal, newState)
 
 #does H-Minimax with alpha-beta pruning, optimizing to a given depth IN TURNS
 #returns (heuristic value for this state based on search, preferred next state)
-def hMin (gameState, targetTurn, multithread = True):
+def hMinByTurn (gameState, targetTurn, multithread = True):
     #print("Starting hMin function.")
-    print("targetTurn: ", targetTurn, ", gameTurn: ", gameState.turn.turnNumber)
+    #print("targetTurn: ", targetTurn, ", gameTurn: ", gameState.turn.turnNumber)
 
     if gameState.turn.turnNumber == targetTurn: #base case
         return (defaultEvaluation(gameState, gameState.turn.currentPlayer),gameState)
@@ -38,14 +38,14 @@ def hMin (gameState, targetTurn, multithread = True):
 
     if multithread:
         pool = Pool(len(nextStates))
-        hTuples = pool.map(partial(hMin, targetTurn = targetTurn, \
+        hTuples = pool.map(partial(hMinByTurn, targetTurn = targetTurn, \
                             multithread=False), nextStates)
         for tup in hTuples:
             values.append(tup[0])
         pool.close()
     else:
         for state in nextStates:
-            values.append(hMin(state, targetTurn, False)[0])
+            values.append(hMinByTurn(state, targetTurn, False)[0])
    
     #print("Close to ending hMin function.")
 
@@ -74,25 +74,27 @@ def hMin (gameState, targetTurn, multithread = True):
 
 #does H-Minimax with alpha-beta pruning, optimizing to the given depth
 #returns (heuristic value for this state based on search, preferred next state)
-def hMinOld (gameState, depth, multithread = True):
+def hMinByDecision (gameState, depth, multithread = True):
     #print("Starting hMin function.")
 
     nextStates = gameState.getPossibleNextStates()
     values = []
+
+    print("Len nextStates: ",len(nextStates))
 
     if depth == 1:
         for state in nextStates:
             values.append(defaultEvaluation(state, state.turn.currentPlayer))
     elif depth > 1 and multithread:
         pool = Pool(len(nextStates))
-        hTuples = pool.map(partial(hMinOld, depth = depth-1, \
+        hTuples = pool.map(partial(hMinByDecision, depth = depth-1, \
                             multithread=False), nextStates)
         for tup in hTuples:
             values.append(tup[0])
         pool.close()
     elif depth > 1 and not multithread:
         for state in nextStates:
-            values.append(hMinOld(state, depth-1, False)[0])
+            values.append(hMinByDecision(state, depth-1, False)[0])
     else:
         return -1 #error. Depth must be at least 1
 

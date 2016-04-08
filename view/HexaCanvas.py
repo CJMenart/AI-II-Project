@@ -318,6 +318,8 @@ class View:
       gameExplain = simulateTurnExplain(self.game)
 
       self.game = gameExplain[0]
+      print("about to call first_time_view")
+      print("total number of roads: ",len(self.game.roads))
       self.first_time_view(*gameExplain)
 
   def first_time_view(self, game, *args):
