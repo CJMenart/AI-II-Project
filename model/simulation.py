@@ -14,7 +14,7 @@ def simulateTurnExplain(gameState): # returns (new game state, what happened)
     if (gameState.turn.turnState == TurnState.DIE_ROLL):
         return simulateDieRoll(gameState)
     else:
-        ts = gameState.turn.turnState
+        ts = str(gameState.turn.turnState) + ', ' + str(gameState.turn.currentPlayer)
         return (simulateDecision(gameState), ts)
 
 def simulateDieRoll(gameState):

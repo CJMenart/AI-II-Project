@@ -192,7 +192,7 @@ class Player:
                    player.resources[ResourceType.LUMBER] >= 1:
                 for road in player.availableRoads(state):
                     builtRoad = copy.deepcopy(state)
-                    builtRoad.roads.append(road.getRoadWithOwner(self.playerId))
+                    builtRoad.roads.append(road.getRoadWithOwner(player.playerId))
                     builtRoad.getPlayerByIndex(builtRoad.turn.currentPlayer).resources[ResourceType.BRICK] -= 1
                     builtRoad.getPlayerByIndex(builtRoad.turn.currentPlayer).resources[ResourceType.LUMBER] -= 1
                     possibleNextStates.append(builtRoad)
