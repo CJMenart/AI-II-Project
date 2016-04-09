@@ -84,7 +84,7 @@ def hMinByDecision (gameState, depth, multithread = True):
 
     if depth == 1:
         for state in nextStates:
--            values.append(defaultEvaluation(state, state.turn.currentPlayer))
+            values.append(defaultEvaluation(state))
             
     elif depth > 1 and multithread:
         pool = Pool(len(nextStates))

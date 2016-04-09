@@ -39,11 +39,8 @@ def heuristic(gameState, playerIndex, weights):
     #then we will count resources.
     #I'm predicting that training will weight this lightly--after all, what really matters is if
     #you have the right resources to build something
-    res = gameState.players[playerIndex].resources
-    resourceCount = res[ResourceType.ORE] + res[ResourceType.WOOL] + \
-            res[ResourceType.LUMBER] + res[ResourceType.GRAIN] + \
-            res[ResourceType.BRICK]
-
+    resourceCount = gameState.getPlayerByIndex(playerIndex).numCards()
+    
     #do you have too many resources? Be careful
     riskOfRobber = 0 if resourceCount >= 8 else 1
 

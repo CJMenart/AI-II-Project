@@ -71,6 +71,13 @@ class Player:
                 num += 1
         return num
 
+    def numCards(self):
+        res = self.resources
+        return res[ResourceType.ORE] + res[ResourceType.WOOL] + \
+            res[ResourceType.LUMBER] + res[ResourceType.GRAIN] + \
+            res[ResourceType.BRICK]
+
+
     #returns a list of roads
     #may return duplicates
     def openRoadLocations(self,gameState):

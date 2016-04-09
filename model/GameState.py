@@ -52,7 +52,17 @@ class GameState:
                 newStates.append(newState)
 
             #then add the state where you roll a 7
+            #we do a simplified version of card-discard, right now, where you can't choose what to discard 
             newState = copy.deepcopy(self)
+            for player in newState.players:
+                numCards = player.numCards()
+                if numCards >= 8:
+                    numToDiscard = int(numCards/2)
+                    for rType in ResourceType:
+                        drop = min(numToDiscard, player.resources[rType])
+                        player.resources[rType] -= drop
+                        numToDiscard -= drop
+
             newState.turn.turnState = TurnState.MOVE_ROBBER
             newStates.append(newState)
                             
