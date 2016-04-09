@@ -4,8 +4,8 @@ from player import *
 #Code pertaining to the heuristic function for H-minimax
 
 #uses a default set of weights
-def defaultEvaluation(gameState, playerIndex):
-    return evaluateByOpponents(gameState, playerIndex, [5, 1, 10, 5, 1.5])
+def defaultEvaluation(gameState):
+    return evaluateByOpponents(gameState, gameState.turn.currentPlayer, [5, 1, 10, 5, 1.5])
 
 
 #the evaluation fed to H-Mnimax

@@ -29,7 +29,7 @@ def hMinByTurn (gameState, targetTurn, multithread = True):
     #print("targetTurn: ", targetTurn, ", gameTurn: ", gameState.turn.turnNumber)
 
     if gameState.turn.turnNumber == targetTurn: #base case
-        return (defaultEvaluation(gameState, gameState.turn.currentPlayer),gameState)
+        return (defaultEvaluation(gameState),gameState)
 
     nextStates = gameState.getPossibleNextStates()
     values = []
@@ -84,7 +84,8 @@ def hMinByDecision (gameState, depth, multithread = True):
 
     if depth == 1:
         for state in nextStates:
-            values.append(defaultEvaluation(state, state.turn.currentPlayer))
+-            values.append(defaultEvaluation(state, state.turn.currentPlayer))
+            
     elif depth > 1 and multithread:
         pool = Pool(len(nextStates))
         hTuples = pool.map(partial(hMinByDecision, depth = depth-1, \
