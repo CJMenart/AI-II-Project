@@ -5,7 +5,7 @@ from player import *
 
 #uses a default set of weights
 def defaultEvaluation(gameState):
-    return evaluateByOpponents(gameState, gameState.turn.currentPlayer, [5, 1, 10, 5, 1.5])
+    return evaluateByOpponents(gameState, gameState.turn.currentPlayer, [6, 1, 8, 5, 1.5, 1.5])
 
 
 #the evaluation fed to H-Mnimax
@@ -25,7 +25,8 @@ def evaluateByOpponents(gameState, playerIndex, weights):
 #evaluates a 'score' for how close a given player is to victory
 #'Weights' is a vector of coefficients to be used for the weighted averages
 #of the following:
-#    Victory points, Resource Cards in Hand, Having 8 or more Cards, Buildable Settlement Locations, Income
+#    Victory points, Resource Cards in Hand, Having 8 or more Cards,
+#    Buildable Settlement Locations, Income, Having the Resources to Build Things
 def heuristic(gameState, playerIndex, weights):
     heuristicVal = 0
 
@@ -55,8 +56,17 @@ def heuristic(gameState, playerIndex, weights):
     for settlement in gameState.settlements:
         if settlement.owner == playerIndex:
             for adjHex in {settlement.adjHex1, settlement.adjHex2, settlement.adjHex3}:
-                if adjHex.isOnBoard():
+                if adjHex.isOnBoard() and not gameState.robberPos == adjHex:
                     income += gameState.spaces[adjHex.x][adjHex.y].numPips() * (2 if settlement.isCity else 1)
 
-    return (vp*weights[0] + resourceCount*weights[1] + riskOfRobber*weights[2] + numOptions*weights[3] + income*weights[4])/sum(weights)           
+    #Okay, this one is a bit less obvious than the others. I'm adding it later on,
+    #because I've observed that in the absence of trading, it's difficult to save
+    #up for the important things. So this places value on doing said saving
+    res = gameState.getPlayerByIndex(playerIndex).resources
+    savings = min(res[ResourceType.BRICK], 1) + min(res[ResourceType.WOOL], 1) + \
+                min(res[ResourceType.LUMBER], 1) + min(res[ResourceType.ORE], 3) + \
+                min(res[ResourceType.GRAIN], 2)
+
+    return (vp*weights[0] + resourceCount*weights[1] + riskOfRobber*weights[2] + numOptions*weights[3] + \
+                income*weights[4] + savings*weights[5])/sum(weights)           
 
