@@ -124,7 +124,6 @@ class Player:
         return buildableRoads
 
     #returns a list of settlements
-    #may return duplicates
     def openSettlementLocations(self, gameState):
         openLocations = []
         for basePoint in pointsOnBoard():
@@ -133,15 +132,18 @@ class Player:
                 for point3 in [val for val in \
                                 basePointNbors if \
                                 val in point2.allAdjacentPoints()]:
-                    settlement = Settlement(basePoint, point2, point3, self.playerId)
+                    settlement = Settlement(basePoint, point2, point3, -1)
                     #check whether an existing settlement is in the same
                     #space or adjacent
                     legalPlacement = True
+                    if settlement in openLocations:
+                        legalPlacement = False
                     for existingSettlement in gameState.settlements:
                         if settlement.adjacentOrCloser(existingSettlement):
                             legalPlacement = False
                     if legalPlacement:
                         openLocations.append(settlement)
+        #print("num open settlements: ", len(openLocations))
         return openLocations
 
     
@@ -163,6 +165,16 @@ class Player:
                         s not in [item for sublist in list(map(lambda x:x.adjacentSettlements(),gameState.settlements)) for item in sublist]: 
                     buildableSettlements.append(s)
         return buildableSettlements
+
+    #used for the newest portion of the heuristic
+    #not a set of settlements, per se, but of intersections this player has already reached
+    def intersections(self, gameState):
+        intersects = []
+        for r in self.roads(gameState):
+            for s in Settlement.adjacentSettlementsByRoad(r):
+                if s not in intersects:
+                    intersects.append(s)
+        return intersects
 
     #returns the child nodes of a GameState in which this player takes zero or one build options
     def buildSomething(self, gameState):

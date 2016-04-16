@@ -5,7 +5,7 @@ from player import *
 
 #uses a default set of weights
 def defaultEvaluation(gameState):
-    return evaluateByOpponents(gameState, gameState.turn.currentPlayer, [6, 1, 8, 5, 1.5, 1.5])
+    return evaluateByOpponents(gameState, gameState.turn.currentPlayer, [6, 1, 8, 0.7, 1.5, 1.5])
 
 
 #the evaluation fed to H-Mnimax
@@ -26,12 +26,14 @@ def evaluateByOpponents(gameState, playerIndex, weights):
 #'Weights' is a vector of coefficients to be used for the weighted averages
 #of the following:
 #    Victory points, Resource Cards in Hand, Having 8 or more Cards,
-#    Buildable Settlement Locations, Income, Having the Resources to Build Things
+#    Quality of Opportunities for Expansion, Income, Having the Resources to Build Things
 def heuristic(gameState, playerIndex, weights):
+
     heuristicVal = 0
+    player = gameState.getPlayerByIndex(playerIndex)
 
     #first thing we account for is score
-    vp = gameState.players[playerIndex].vp(gameState)
+    vp = player.vp(gameState)
 
     if vp == 10:    #victory state. Immediately return maximum possible heuristic value
         return 100
@@ -40,24 +42,60 @@ def heuristic(gameState, playerIndex, weights):
     #then we will count resources.
     #I'm predicting that training will weight this lightly--after all, what really matters is if
     #you have the right resources to build something
-    resourceCount = gameState.getPlayerByIndex(playerIndex).numCards()
+    resourceCount = player.numCards()
     
     #do you have too many resources? Be careful
     riskOfRobber = 0 if resourceCount >= 8 else 1
 
+    #OLD VERSION:
     #we can also count the number of settlement-building opportunities we might have
     #gotta get territory!
-    numOptions = len(gameState.getPlayerByIndex(playerIndex).\
-                         availableSettlements(gameState))
+    #numOptions = len(gameState.getPlayerByIndex(playerIndex).\
+    #                     availableSettlements(gameState))
+
+    #NEW VERSION: Account for the quality of each building site left on the board
+    #and their distance from the player
+
+    #print("Starting to evaluate expansion opportunity")
+
+    expansionOpportunity = 0
+
+    takenByOpponents = set([])
+
+    for opponent in [val for val in gameState.players if val.playerId != playerIndex]:
+        takenByOpponents = takenByOpponents.union(set(opponent.availableSettlements(gameState)))
     
+    openSettlements = list(set(player.openSettlementLocations(gameState)).difference(takenByOpponents))
+    intersections = player.intersections(gameState)
+
+    #print("Num of locations to examine: ", len(openSettlements))
+    
+    distances = [11]*len(openSettlements) #correspondance by index with openSettlements
+
+    #here's where it gets n-squared
+    for intersection in intersections:
+        for sInd in range(0,len(openSettlements)):
+            settlement = openSettlements[sInd]
+            xI = sum([intersection.adjHex1.x, intersection.adjHex2.x, intersection.adjHex3.x])/3
+            yI = sum([intersection.adjHex1.y, intersection.adjHex2.y, intersection.adjHex3.y])/3
+            xS = sum([settlement.adjHex1.x, settlement.adjHex2.x, settlement.adjHex3.x])/3
+            yS = sum([settlement.adjHex1.y, settlement.adjHex2.y, settlement.adjHex3.y])/3
+            distanceInRoads = round(abs(xI-xS) + abs(xI+yI-xS-yS) + abs(yI-yS))
+            distances[sInd] = min(distances[sInd], distanceInRoads)
+
+    #now assign value 
+    for sInd in range(0,len(openSettlements)):
+        settlement = openSettlements[sInd]
+        expansionOpportunity = expansionOpportunity + \
+                        settlement.levelOfIncome(gameState)/(distances[sInd]+1)
+
+    #print("expansionOpp: ", expansionOpportunity)
 
     #we will also count player income--counted in terms of 'pips'
     income = 0
     for settlement in gameState.settlements:
         if settlement.owner == playerIndex:
-            for adjHex in {settlement.adjHex1, settlement.adjHex2, settlement.adjHex3}:
-                if adjHex.isOnBoard() and not gameState.robberPos == adjHex:
-                    income += gameState.spaces[adjHex.x][adjHex.y].numPips() * (2 if settlement.isCity else 1)
+            income += settlement.levelOfIncome(gameState)
 
     #Okay, this one is a bit less obvious than the others. I'm adding it later on,
     #because I've observed that in the absence of trading, it's difficult to save
@@ -67,6 +105,6 @@ def heuristic(gameState, playerIndex, weights):
                 min(res[ResourceType.LUMBER], 1) + min(res[ResourceType.ORE], 3) + \
                 min(res[ResourceType.GRAIN], 2)
 
-    return (vp*weights[0] + resourceCount*weights[1] + riskOfRobber*weights[2] + numOptions*weights[3] + \
+    return (vp*weights[0] + resourceCount*weights[1] + riskOfRobber*weights[2] + expansionOpportunity*weights[3] + \
                 income*weights[4] + savings*weights[5])/sum(weights)           
 

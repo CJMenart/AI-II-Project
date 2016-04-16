@@ -19,6 +19,9 @@ class Settlement:
                     self.adjHex3 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
                     True if self.owner <0 else self.owner == other.owner)
     
+    def __hash__(self):
+        return (self.adjHex1.x + self.adjHex2.y) * (self.adjHex3.x+2) 
+
     def __str__(self):
         return ("adjHex1: {0}, adjHex2: {1}, adjHex3: {2} owner: {3}".format( \
                 self.adjHex1, self.adjHex2, self.adjHex3, self.owner))
@@ -61,6 +64,13 @@ class Settlement:
             return Settlement(self.adjHex1, self.adjHex2, self.adjHex3, id)
         else:
             print("Error: attempting to change road owner")
+
+    def levelOfIncome(self, gameState):
+        income = 0
+        for adjHex in {self.adjHex1, self.adjHex2, self.adjHex3}:
+                if adjHex.isOnBoard() and not gameState.robberPos == adjHex:
+                    income += gameState.spaces[adjHex.x][adjHex.y].numPips() * (2 if self.isCity else 1)
+        return income
 
     @classmethod
     def adjacentSettlementsByRoad(cls, road):

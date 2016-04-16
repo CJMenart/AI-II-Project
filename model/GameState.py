@@ -88,7 +88,7 @@ class GameState:
                 
                 for road in possibleRoads:
                     newState = copy.deepcopy(self)
-                    newState.settlements.append(settlement)
+                    newState.settlements.append(settlement.getSettlementWithOwner(self.turn.currentPlayer))
                     newState.roads.append(road)
 
                     #when they place their second settlement, a player gets resources
