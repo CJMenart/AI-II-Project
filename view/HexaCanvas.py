@@ -27,6 +27,7 @@ debug_coordinates = True
 fake_roads = False
 fake_settlements = False
 skip_to_good_part = True
+settlement_grid_test = True
 
 # This class and 60% of its top 3 functions are from stackoverflow.
 # The remainder is original.
@@ -230,6 +231,26 @@ class CatanBoard(HexaCanvas):
             label = "\n" + label + "\n({0},{1})".format(pos.x, pos.y)
         self.robber = self.create_vertex(pos, label=label, radius=radius, width=2, ffont=tkFont.Font(weight='bold'), **kwargs)
 
+    def setTCorner(self, cell, radius=7, label="", **kwargs):
+        x = cell.x
+        y = cell.y
+        vertex = layout.ScreenPoint(x+1.0/3.0, y-2.0/3.0)
+        if debug_coordinates and label=="":
+            p = Settlement.hexToTLCorner(cell)
+            label="({0},{1})".format(p.x+1, p.y-1)
+            label=label+"\n({0},{1})Y".format(x,y)
+        self.create_vertex(vertex, label=label, radius=radius, **kwargs)
+
+    def setTLCorner(self, cell, radius=7, label="", **kwargs):
+        x = cell.x
+        y = cell.y
+        vertex = layout.ScreenPoint(x-1.0/3.0, y-1.0/3.0)
+        if debug_coordinates and label=="":
+            p = Settlement.hexToTLCorner(cell)
+            label="({0},{1})".format(p.x, p.y)
+            label=label+"\n({0},{1})X".format(x,y)
+        self.create_vertex(vertex, label=label, radius=radius, **kwargs)
+
     def setVertex(self, cell1, cell2, cell3, radius=7, label="", **kwargs):
         vertex = layout.ScreenPoint((cell1.x+cell2.x+cell3.x)/3.0, (cell1.y+cell2.y+cell3.y)/3.0)
         if debug_coordinates and label=="":
@@ -346,37 +367,62 @@ class View:
                     fill = self.tile_fills[game.spaces[x][y].tileType]
                     self.board.setCell(p, label, fill=fill)
 
-        self.board.setRobber(game.robberPos)
+        if settlement_grid_test:
+            self.board.setCell(Point(0,0), label="(0, 0)", fill="white")
+        else:
+            self.board.setRobber(game.robberPos)
 
         self.view(game, *args)
 
   def view(self, game, explain=None):
         nPlayers = len(game.players)
+        
+        if settlement_grid_test:
+            pts = [[0]*11 for i in range(11)]
+            for x in range(-1,6):
+                for y in range(0,6):
+                    p = Point(x,y)
+                    q = Settlement.hexToTLCorner(p)
+                    if Settlement.isCorner(q):
+                        self.board.setTLCorner(p)
+                        if True:
+                            pts[q.x][q.y] = 1
 
-        # Just as a test, display fake roads when there aren't any            
-        roads = game.roads
-        if fake_roads and len(roads) <= 0:
-            center = Point(2,2)
-            for i in xrange(len(point_directions)):
-                h1 = center + point_directions[i]
-                h2 = h1 + point_directions[i]
-                assert h1 != h2
-                #print h1, h2
-                roads.append(Road(h1, h2, i%nPlayers))
+                    q = q+Point(1,-1)
+                    if Settlement.isCorner(q) :
+                        self.board.setTCorner(p)
+                        if True:
+                            pts[q.x][q.y] = 1
 
-        for road in roads:
-            self.board.setEdge(road.adjHex1, road.adjHex2, color=self.playerColors[road.owner])
+            for row in pts:
+                for ele in row:
+                    print ele,
+                print    
+        else:
+            # Just as a test, display fake roads when there aren't any 
+            roads = game.roads
+            if fake_roads and len(roads) <= 0:
+                center = Point(2,2)
+                for i in xrange(len(point_directions)):
+                    h1 = center + point_directions[i]
+                    h2 = h1 + point_directions[i]
+                    assert h1 != h2
+                    #print h1, h2
+                    roads.append(Road(h1, h2, i%nPlayers))
 
-        settlements = game.settlements
-        if fake_settlements and len(settlements) <= 0:
-            s1 = Settlement(Point(1,2), Point(2,2), Point(2,1), 1)
-            c1 = Settlement(Point(3,3), Point(3,2), Point(2,3), 2)
-            c1.isCity = True
-            settlements.append(s1)
-            settlements.append(c1)
+            for road in roads:
+                self.board.setEdge(road.adjHex1, road.adjHex2, color=self.playerColors[road.owner])
 
-        for s in settlements:
-            self.board.setSettlement(s.adjHex1, s.adjHex2, s.adjHex3, s.isCity, fill=self.playerColors[s.owner])
+            settlements = game.settlements
+            if fake_settlements and len(settlements) <= 0:
+                s1 = Settlement(Point(1,2), Point(2,2), Point(2,1), 1)
+                c1 = Settlement(Point(3,3), Point(3,2), Point(2,3), 2)
+                c1.isCity = True
+                settlements.append(s1)
+                settlements.append(c1)
+
+            for s in settlements:
+                self.board.setSettlement(s.adjHex1, s.adjHex2, s.adjHex3, s.isCity, fill=self.playerColors[s.owner])
 
         for i in range(nPlayers):
             if self.hand_text[i]:

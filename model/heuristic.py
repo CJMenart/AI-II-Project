@@ -1,5 +1,7 @@
 from GameState import *
 from player import *
+import time
+import traceback
 
 #Code pertaining to the heuristic function for H-minimax
 
@@ -62,15 +64,20 @@ def heuristic(gameState, playerIndex, weights):
 
     takenByOpponents = set([])
 
+    t0 = time.time()
     for opponent in [val for val in gameState.players if val.playerId != playerIndex]:
         takenByOpponents = takenByOpponents.union(set(opponent.availableSettlements(gameState)))
-    
+    t1 = time.time()    
+
     openSettlements = list(set(player.openSettlementLocations(gameState)).difference(takenByOpponents))
+    t2 = time.time()
     intersections = player.intersections(gameState)
+    t3 = time.time()
 
     #print("Num of locations to examine: ", len(openSettlements))
     
     distances = [11]*len(openSettlements) #correspondance by index with openSettlements
+    t4 = time.time()
 
     #here's where it gets n-squared
     for intersection in intersections:
@@ -82,6 +89,14 @@ def heuristic(gameState, playerIndex, weights):
             yS = sum([settlement.adjHex1.y, settlement.adjHex2.y, settlement.adjHex3.y])/3
             distanceInRoads = round(abs(xI-xS) + abs(xI+yI-xS-yS) + abs(yI-yS))
             distances[sInd] = min(distances[sInd], distanceInRoads)
+    t5 = time.time()
+#    diffs = [t1-t0, t2-t1, t3-t2, t5-t4]
+    #print(diffs)
+#    tup = max( (v, i) for i, v in enumerate(diffs))
+#    if tup[1] != 1:
+#        print(tup)
+
+#    traceback.print_stack()
 
     #now assign value 
     for sInd in range(0,len(openSettlements)):

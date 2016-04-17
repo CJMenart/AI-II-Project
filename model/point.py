@@ -23,6 +23,12 @@ class Point:
     def __sub__(self, h2):
         return Point(self.x - h2.x, self.y - h2.y)
 
+    def __mul__(self, a):
+        return Point(self.x*a, self.y*a)
+
+    def __div__(self, a):
+        return Point(self.x/a, self.y/a)
+
 #    directions = [Point( 1,-1), Point( 0,-1), Point(-1, 0), Point(-1, 1), Point( 0, 1), Point( 1, 0)]
 
     # these are in order of their atan2 angles

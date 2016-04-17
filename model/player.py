@@ -122,7 +122,7 @@ class Player:
                     buildableRoads.append(closeRoad)
             
         return buildableRoads
-
+    # TODO: make this a static method, or move it to GameState, OR have it return settlements with self's id.
     #returns a list of settlements
     def openSettlementLocations(self, gameState):
         openLocations = []
