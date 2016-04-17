@@ -264,3 +264,40 @@ class Player:
                 vp += 2 if settlement.isCity else 1
 
         return vp
+
+    # depth first search from the adding road with the direction(settlement) 
+    # search down the tree on existing road, note that adding road is not 
+    # in existing road. 
+    def DFS(self, addingRoad, existingRoad, direction): 
+        adjRoads = [r for r in direction.adjacentRoads() if r != addingRoad]
+        adjExistingRoads = [r for r in adjRoads if r in existingRoad]
+        # recursive step
+        if (len(adjExistingRoads) > 0): 
+            possibleResult = []
+            for rd in adjExistingRoads: 
+                for s in Settlement.adjacentSettlementsByRoad(rd): 
+                    if addingRoad not in s.adjacentRoads(): 
+                        setDir = s 
+                DFSresult = self.DFS(rd, [r for r in existingRoad if r != rd], setDir)
+                DFSresult[1].append(rd)
+                possibleResult.append(DFSresult)
+            possibleResult.sort(key = lambda x: -x[0])
+            longerPath = possibleResult[0]
+            return [longerPath[0]+1, longerPath[1] ] 
+        # base case
+        else:
+            return [0, []]
+
+    # to be called before the adding Roads is inserted into the player's road 
+    # list. use the adding Road with -1 owner id. 
+    # return int (the possible longest road lenth with the adding road)
+    def possibleLongestRoadLength(self, addingRoad, existingRoads): 
+        # look at one direction from addingRoad, then the other direction 
+        # then sum the roads to get total length
+        adjSets =Settlement.adjacentSettlementsByRoad(addingRoad) 
+        p1 = self.DFS(addingRoad, existingRoads, adjSets[0])
+        # need to take out roads that are already used in one direction 
+        p2 = self.DFS(addingRoad, [item for item in existingRoads \
+                                       if item not in p1[1]], adjSets[1])
+        return 1 + p1[0] + p2[0]
+            

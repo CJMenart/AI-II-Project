@@ -17,7 +17,8 @@ class Settlement:
         return (self.adjHex1 in [other.adjHex1, other.adjHex2, other.adjHex3] and \
                     self.adjHex2 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
                     self.adjHex3 in[other.adjHex1, other.adjHex2, other.adjHex3] and \
-                    True if self.owner <0 else self.owner == other.owner)
+                    True if self.owner <0 or other.owner <0 \
+                    else self.owner == other.owner)
     
     def __hash__(self):
         return (self.adjHex1.x + self.adjHex2.y) * (self.adjHex3.x+2) 

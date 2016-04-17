@@ -12,7 +12,8 @@ class Road:
     def __eq__(self, other):
         # use negative owner number as a wildcard 
         return (self.sameLocationAs(other) and \
-                    True if self.owner <0 else self.owner == other.owner)
+                    True if self.owner <0 or  other.owner < 0 \
+                    else self.owner == other.owner)
 
     def __str__(self):
         return ("adjHex1: {0}, adjHex2: {1}, owner: {2}".format(self.adjHex1, self.adjHex2, self.owner))
@@ -50,8 +51,7 @@ class Road:
                     Road(twoClosePoints[1], self.adjHex2, -1)]
 
     def getRoadWithOwner(self, id):
-        if self.owner < 0 :
-            return Road(self.adjHex1, self.adjHex2, id)
-        else: 
-            print("Error: attempting to change road owner")
+        return Road(self.adjHex1, self.adjHex2, id)
+
+
 

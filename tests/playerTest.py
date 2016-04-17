@@ -187,6 +187,159 @@ ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0} )
         #self.assertIn(Settlement(Point(2,0), Point(2,1), Point(3,0), -1), availableSettlements)
         self.assertEqual(len(availableSettlements), 0)
 
+    def test_DFS_base_case(self): 
+        setupAddingRoad = Road(Point(1,1), Point(2,0), 1) 
+        setupExistingRoad = []  
+        direction = Settlement(Point(1,1), Point(2,0), Point(2,1), 1)
+        player = Player(1)
+        DFSresult = player.DFS(setupAddingRoad, setupExistingRoad, direction)
+        self.assertEqual(DFSresult[0], 0)
+        self.assertEqual(DFSresult[1], [])
+
+    def test_DFS_base_case_add_one(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), -1)
+        setupExistingRoad = [Road(Point(1,1), Point(2,1), 1)]
+        direction = Settlement(Point(1,1), Point(2,0), Point(2,1), 1)
+        player = Player(1)
+        DFSresult = player.DFS(setupAddingRoad, setupExistingRoad, direction)
+        self.assertEqual(DFSresult[0], 1)
+        self.assertEqual(DFSresult[1], [Road(Point(1,1), Point(2,1), 1)])
+
+    def test_DFS_direction_with_2_branch(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), -1)
+        setupExistingRoad = [Road(Point(1,1), Point(2,1), 1), \
+                                 Road(Point(2,0), Point(2,1), 1)]
+        direction = Settlement(Point(1,1), Point(2,0), Point(2,1), 1)
+        player = Player(1)
+        DFSresult = player.DFS(setupAddingRoad, setupExistingRoad, direction)
+        self.assertEqual(DFSresult[0], 1)
+        self.assertEqual(DFSresult[1], [Road(Point(1,1), Point(2,1), 1)])
+
+    def test_DFS_direction_with_one_road_that_has_two_branches(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), -1)
+        setupExistingRoad = [Road(Point(1,1), Point(2,1), 1), \
+                                 Road(Point(1,1), Point(1,2), 1), \
+                                 Road(Point(2,1), Point(1,2), 1)]
+        direction = Settlement(Point(1,1), Point(2,0), Point(2,1), 1)
+        player = Player(1)
+        DFSresult = player.DFS(setupAddingRoad, setupExistingRoad, direction)
+        self.assertEqual(DFSresult[0], 2)
+        self.assertEqual(DFSresult[1], [Road(Point(1,1), Point(1,2), 1), \
+                                            Road(Point(1,1), Point(2,1), 1)])
+
+    def test_DFS_cycle(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), -1)
+        setupExistingRoad = [Road(Point(1,0), Point(1,1), 1), \
+                                 Road(Point(0,1), Point(1,1), 1), \
+                                 Road(Point(0,2), Point(1,1), 1), \
+                                 Road(Point(1,2), Point(1,1), 1), \
+                                 Road(Point(2,1), Point(1,1), 1)]
+        direction = Settlement(Point(1,1), Point(2,0), Point(2,1), 1)
+        player = Player(1)
+        DFSresult = player.DFS(setupAddingRoad, setupExistingRoad, direction)
+        self.assertEqual(DFSresult[0], 5)
+        #for r in DFSresult[1] :
+        #    print(r)
+        #self.assertEqual(DFSresult[1], [Road(Point(1,1), Point(1,2), 1), \
+        #                                    Road(Point(1,1), Point(2,1), 1)])
+
+    def test_DFS_cycle_with_one_extra(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), -1)
+        setupExistingRoad = [Road(Point(1,0), Point(2,0), 1), \
+                                 Road(Point(1,0), Point(1,1), 1), \
+                                 Road(Point(0,1), Point(1,1), 1), \
+                                 Road(Point(0,2), Point(1,1), 1), \
+                                 Road(Point(1,2), Point(1,1), 1), \
+                                 Road(Point(2,1), Point(1,1), 1)]
+        direction = Settlement(Point(1,1), Point(2,0), Point(2,1), 1)
+        player = Player(1)
+        DFSresult = player.DFS(setupAddingRoad, setupExistingRoad, direction)
+        #for r in DFSresult[1] :
+        #    print(r)
+        self.assertEqual(DFSresult[0], 6)
+
+    def test_DFS_cycle_with_one_extra_reverse_direction(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), -1)
+        setupExistingRoad = [Road(Point(1,0), Point(2,0), 1), \
+                                 Road(Point(1,0), Point(1,1), 1), \
+                                 Road(Point(0,1), Point(1,1), 1), \
+                                 Road(Point(0,2), Point(1,1), 1), \
+                                 Road(Point(1,2), Point(1,1), 1), \
+                                 Road(Point(2,1), Point(1,1), 1)]
+        direction = Settlement(Point(1,1), Point(2,0), Point(1,0), 1)
+        player = Player(1)
+        DFSresult = player.DFS(setupAddingRoad, setupExistingRoad, direction)
+        #for r in DFSresult[1] :                                         
+        #    print(r)                                                         
+        self.assertEqual(DFSresult[0], 5)
+
+    def test_DFS_cycle_with_one_extra_branch(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), -1)
+        setupExistingRoad = [ \
+                                 Road(Point(1,0), Point(1,1), 1), \
+                                 Road(Point(0,1), Point(1,1), 1), \
+                                 Road(Point(0,2), Point(1,1), 1), \
+                                 Road(Point(1,2), Point(1,1), 1), \
+                                 Road(Point(2,1), Point(1,1), 1), \
+                                 Road(Point(1,2), Point(2,1), 1) ]
+        direction = Settlement(Point(1,1), Point(2,0), Point(2,1), 1)
+        player = Player(1)
+        DFSresult = player.DFS(setupAddingRoad, setupExistingRoad, direction)
+        #for r in DFSresult[1] :                                            
+        #    print(r)                                                          
+        self.assertEqual(DFSresult[0], 5)
+
+    def test_possibleLongestRoadLength_base_case(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), 1)
+        setupExistingRoad = []
+        player = Player(1)
+        result = player.possibleLongestRoadLength(setupAddingRoad, setupExistingRoad)
+        self.assertEqual(result, 1)
+    
+    def test_possibleLongestRoadLength_base_case_add_one(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), 1)
+        setupExistingRoad = [Road(Point(1,1), Point(2,1), 1)]
+        player = Player(1)
+        result = player.possibleLongestRoadLength(setupAddingRoad, setupExistingRoad)
+        self.assertEqual(result, 2)
+
+    def test_possibleLongestRoadLength_direction_with_2_branch(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), -1)
+        setupExistingRoad = [Road(Point(1,1), Point(2,1), 1), \
+                                 Road(Point(2,0), Point(2,1), 1)]
+        player = Player(1)
+        result = player.possibleLongestRoadLength(setupAddingRoad,\
+                         setupExistingRoad)
+        self.assertEqual(result, 2)
+
+    def test_possibleLongestRoadLength_cycle(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), -1)
+        setupExistingRoad = [Road(Point(1,0), Point(1,1), 1), \
+                                 Road(Point(0,1), Point(1,1), 1), \
+                                 Road(Point(0,2), Point(1,1), 1), \
+                                 Road(Point(1,2), Point(1,1), 1), \
+                                 Road(Point(2,1), Point(1,1), 1)]
+        player = Player(1)
+        result = player.possibleLongestRoadLength(setupAddingRoad,\
+                             setupExistingRoad)
+        self.assertEqual(result, 6)
+
+    def test_possibleLongestRoadLength_one_road_in_each_direction(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), -1)
+        setupExistingRoad = [Road(Point(1,0), Point(1,1), 1), \
+                                 Road(Point(2,0), Point(2,1), 1)]
+        player = Player(1)
+        result = player.possibleLongestRoadLength(setupAddingRoad,\
+                             setupExistingRoad)
+        self.assertEqual(result, 3)
+'''
+    def test_possibleLongestRoadLen_base_case(self):
+        setupAddingRoad = Road(Point(1,1), Point(2,0), 1)
+        setupExistingRoad = []
+        player = Player(1)
+        result = player.possibleLongestRoadLen(addingRoad, existingRoad)
+        self.assertEqual(1, result)
+'''
 if __name__ == '__main__':
     unittest.main()
 
