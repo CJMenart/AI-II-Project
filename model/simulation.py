@@ -69,8 +69,8 @@ def skipToGoodPart(**kwargs):
     for player in game.players:
         #print player.resources
         for resource in ResourceType:
-            player.resources[resource] += 2
-        assert player.resources[ResourceType.WOOL] >= 2
+            player.resources[resource] += 1
+        assert player.resources[ResourceType.WOOL] >= 1
         #player.resources[ResourceType.WOOL] = 5
         #player.resources[ResourceType.BRICK] = 5
         #player.resources[ResourceType.ORE] = 5
@@ -87,8 +87,8 @@ def simulateQuickGame():
         game = simulateTurnExplain(game)[0]
         vps = [p.vp(game) for p in game.players]
         print("Turn ", game.turn.turnNumber, " ,", game.turn.turnState)
-        #print("Points: ", vps) #game.players[0].vp(game), \
-        #      game.players[1].vp(game), game.players[2].vp(game))
+        print("Points: ", vps) #game.players[0].vp(game), \
+        #game.players[1].vp(game), game.players[2].vp(game))
     print("Game Won!")
     print("Points: ", vps) #game.players[0].vp(game), \
     #          game.players[1].vp(game), game.players[2].vp(game))

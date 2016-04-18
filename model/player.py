@@ -77,6 +77,58 @@ class Player:
             res[ResourceType.LUMBER] + res[ResourceType.GRAIN] + \
             res[ResourceType.BRICK]
 
+    #determines at what rate you can trade a given resource to the
+    #bank; depends on what 'ports' you have.
+    #written very shoddily; it was quick this way, and won't run
+    #any slower than if I do it using dictionaries
+    def bankTradeRate(self, resource, gameState):
+        settlements = self.settlements(gameState)
+        if resource == ResourceType.WOOL:
+            for settlement in settlements:
+                spaces = {settlement.adjHex1, \
+                          settlement.adjHex2, settlement.adjHex3}
+                if Point(1,0) in spaces and Point(1,1) in spaces:
+                    print("Sheep port!")
+                    return 2
+        if resource == ResourceType.BRICK:
+            for settlement in settlements:
+                spaces = {settlement.adjHex1, \
+                          settlement.adjHex2, settlement.adjHex3}
+                if Point(4,1) in spaces and Point(5,1) in spaces:
+                    print("Brick port!")
+                    return 2
+        if resource == ResourceType.ORE:
+            for settlement in settlements:
+                spaces = {settlement.adjHex1, \
+                          settlement.adjHex2, settlement.adjHex3}
+                if Point(0,3) in spaces and Point(-1,4) in spaces:
+                    print("Ore port!")
+                    return 2
+        if resource == ResourceType.LUMBER:
+            for settlement in settlements:
+                spaces = {settlement.adjHex1, \
+                          settlement.adjHex2, settlement.adjHex3}
+                if Point(3,3) in spaces and Point(4,3) in spaces:
+                    print("Wood port!")
+                    return 2
+        if resource == ResourceType.GRAIN:
+            for settlement in settlements:
+                spaces = {settlement.adjHex1, \
+                          settlement.adjHex2, settlement.adjHex3}
+                if Point(1,4) in spaces and Point(0,5) in spaces:
+                    print("Wheat port!")
+                    return 2
+        
+        for settlement in settlements:
+            spaces = {settlement.adjHex1, \
+                        settlement.adjHex2, settlement.adjHex3}
+            if (Point(0,2) in spaces and Point(-1,2) in spaces) \
+                or (Point(2,4) in spaces and Point(2,5) in spaces) \
+                or (Point(3,0) in spaces and Point(3,-1) in spaces) \
+                or (Point(4,0) in spaces and Point(5,-1) in spaces):
+                print ("Misc port!")
+                return 3
+        return 4
 
     #returns a list of roads
     #may return duplicates
@@ -193,10 +245,12 @@ class Player:
         while stateIndex < len(possibleNextStates):
             state = possibleNextStates[stateIndex]
             for fromIndex in ResourceType:
-                if state.getPlayerByIndex(state.turn.currentPlayer).resources[fromIndex] >= 4:
+                tradeRate = self.bankTradeRate(fromIndex, gameState)
+                if state.getPlayerByIndex(state.turn.currentPlayer).resources[fromIndex] >= tradeRate:
+                    print("Trading ", fromIndex, " at trade rate ", tradeRate)
                     for toIndex in [i for i in ResourceType if i != fromIndex]:
                         traded = copy.deepcopy(state)
-                        traded.getPlayerByIndex(traded.turn.currentPlayer).resources[fromIndex] -= 4
+                        traded.getPlayerByIndex(traded.turn.currentPlayer).resources[fromIndex] -= tradeRate
                         traded.getPlayerByIndex(traded.turn.currentPlayer).resources[toIndex] += 1
                         possibleNextStates.append(traded)
             stateIndex += 1
