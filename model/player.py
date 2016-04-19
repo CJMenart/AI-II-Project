@@ -265,6 +265,12 @@ class Player:
                    player.resources[ResourceType.LUMBER] >= 1:
                 for road in player.availableRoads(state):
                     builtRoad = copy.deepcopy(state)
+                    # check if creates a longest road if so, update state
+                    possLongerLength = possibleLongestRoadLength(road, player.roads()) 
+                    if possLongerLength > 5 && \
+                            possLongerLength > buildRoad.longestRoadLenWithId[0]: 
+                        buildRoad.longestRoadLenWithId = [possLongerLength, player.playerId]
+                    # appending road to state
                     builtRoad.roads.append(road.getRoadWithOwner(player.playerId))
                     builtRoad.getPlayerByIndex(builtRoad.turn.currentPlayer).resources[ResourceType.BRICK] -= 1
                     builtRoad.getPlayerByIndex(builtRoad.turn.currentPlayer).resources[ResourceType.LUMBER] -= 1
@@ -316,6 +322,9 @@ class Player:
         for settlement in gameState.settlements:
             if settlement.owner == self.playerId:
                 vp += 2 if settlement.isCity else 1
+        # if have longest road title, add 2 pts
+        if gameState.longestRoadLenWithId[1] == self.playerId: 
+            vp += 2
 
         return vp
 

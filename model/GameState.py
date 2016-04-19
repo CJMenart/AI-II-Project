@@ -28,6 +28,7 @@ class GameState:
         self.settlements = settlements
         self.turn = turn
         self.robberPos = robberPos;
+        self.longestRoadLenWithId = [0, -1]
   
     #gets child nodes on down the H-Minimax graph
     #Note that unlike in Chess or Go, the nodes here proceed at an uneven rate. Along
