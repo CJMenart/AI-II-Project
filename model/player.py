@@ -267,7 +267,7 @@ class Player:
                     builtRoad = copy.deepcopy(state)
                     # check if creates a longest road if so, update state
                     possLongerLength = possibleLongestRoadLength(road, player.roads()) 
-                    if possLongerLength > 5 && \
+                    if possLongerLength > 5 and \
                             possLongerLength > buildRoad.longestRoadLenWithId[0]: 
                         buildRoad.longestRoadLenWithId = [possLongerLength, player.playerId]
                     # appending road to state
