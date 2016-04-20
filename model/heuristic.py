@@ -3,6 +3,9 @@ from player import *
 
 #Code pertaining to the heuristic function for H-minimax
 
+def asyncEval(gameState, array, index):
+    array[index] = defaultEvaluation(gameState)
+
 #uses a default set of weights
 def defaultEvaluation(gameState):
     return evaluateByOpponents(gameState, gameState.turn.currentPlayer, [6, 1, 8, 0.7, 1.5, 1.5])

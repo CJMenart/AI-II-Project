@@ -88,35 +88,35 @@ class Player:
                 spaces = {settlement.adjHex1, \
                           settlement.adjHex2, settlement.adjHex3}
                 if Point(1,0) in spaces and Point(1,1) in spaces:
-                    print("Sheep port!")
+                    #print("Sheep port!")
                     return 2
         if resource == ResourceType.BRICK:
             for settlement in settlements:
                 spaces = {settlement.adjHex1, \
                           settlement.adjHex2, settlement.adjHex3}
                 if Point(4,1) in spaces and Point(5,1) in spaces:
-                    print("Brick port!")
+                    #print("Brick port!")
                     return 2
         if resource == ResourceType.ORE:
             for settlement in settlements:
                 spaces = {settlement.adjHex1, \
                           settlement.adjHex2, settlement.adjHex3}
                 if Point(0,3) in spaces and Point(-1,4) in spaces:
-                    print("Ore port!")
+                    #print("Ore port!")
                     return 2
         if resource == ResourceType.LUMBER:
             for settlement in settlements:
                 spaces = {settlement.adjHex1, \
                           settlement.adjHex2, settlement.adjHex3}
                 if Point(3,3) in spaces and Point(4,3) in spaces:
-                    print("Wood port!")
+                    #print("Wood port!")
                     return 2
         if resource == ResourceType.GRAIN:
             for settlement in settlements:
                 spaces = {settlement.adjHex1, \
                           settlement.adjHex2, settlement.adjHex3}
                 if Point(1,4) in spaces and Point(0,5) in spaces:
-                    print("Wheat port!")
+                    #print("Wheat port!")
                     return 2
         
         for settlement in settlements:
@@ -126,7 +126,7 @@ class Player:
                 or (Point(2,4) in spaces and Point(2,5) in spaces) \
                 or (Point(3,0) in spaces and Point(3,-1) in spaces) \
                 or (Point(4,0) in spaces and Point(5,-1) in spaces):
-                print ("Misc port!")
+                #print ("Misc port!")
                 return 3
         return 4
 
@@ -266,10 +266,10 @@ class Player:
                 for road in player.availableRoads(state):
                     builtRoad = copy.deepcopy(state)
                     # check if creates a longest road if so, update state
-                    possLongerLength = possibleLongestRoadLength(road, player.roads()) 
-                    if possLongerLength > 5 and \
-                            possLongerLength > buildRoad.longestRoadLenWithId[0]: 
-                        buildRoad.longestRoadLenWithId = [possLongerLength, player.playerId]
+                    #possLongerLength = self.possibleLongestRoadLength(road, player.roads(builtRoad)) 
+                    #if possLongerLength > 5 and \
+                    #        possLongerLength > buildRoad.longestRoadLenWithId[0]: 
+                    #    buildRoad.longestRoadLenWithId = [possLongerLength, player.playerId]
                     # appending road to state
                     builtRoad.roads.append(road.getRoadWithOwner(player.playerId))
                     builtRoad.getPlayerByIndex(builtRoad.turn.currentPlayer).resources[ResourceType.BRICK] -= 1
@@ -341,9 +341,9 @@ class Player:
                 for s in Settlement.adjacentSettlementsByRoad(rd): 
                     if addingRoad not in s.adjacentRoads(): 
                         setDir = s 
-                DFSresult = self.DFS(rd, [r for r in existingRoad if r != rd], setDir)
-                DFSresult[1].append(rd)
-                possibleResult.append(DFSresult)
+                        DFSresult = self.DFS(rd, [r for r in existingRoad if r != rd], setDir)
+                        DFSresult[1].append(rd)
+                        possibleResult.append(DFSresult)
             possibleResult.sort(key = lambda x: -x[0])
             longerPath = possibleResult[0]
             return [longerPath[0]+1, longerPath[1] ] 

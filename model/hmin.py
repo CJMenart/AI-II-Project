@@ -82,10 +82,24 @@ def hMinByDecision (gameState, depth, multithread = True):
 
     print("Len nextStates: ",len(nextStates))
 
-    if depth == 1:
+    if depth == 1 and multithread:
+        stateInd = 0
+        poolSize = 50
+        pool = Pool(poolSize)
+        while (stateInd < len(nextStates)):
+            
+        #for state in nextStates:
+            print("About to pool.")
+
+            nextVals = pool.map(defaultEvaluation, nextStates[stateInd:min(\
+                            len(nextStates), stateInd+poolSize)])
+            values.extend(nextVals)
+            stateInd += poolSize
+        pool.close()
+    elif depth == 1 and not multithread:
         for state in nextStates:
             values.append(defaultEvaluation(state))
-            
+        
     elif depth > 1 and multithread:
         pool = Pool(len(nextStates))
         hTuples = pool.map(partial(hMinByDecision, depth = depth-1, \
