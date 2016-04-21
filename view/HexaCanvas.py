@@ -26,7 +26,7 @@ orientation_pointy = True
 debug_coordinates = True
 fake_roads = False
 fake_settlements = False
-skip_to_good_part = True
+skip_to_good_part = False
 
 # This class and 60% of its top 3 functions are from stackoverflow.
 # The remainder is original.

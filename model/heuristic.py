@@ -7,9 +7,9 @@ def asyncEval(gameState, array, index):
     array[index] = defaultEvaluation(gameState)
 
 #uses a default set of weights
-def defaultEvaluation(gameState):
-    return evaluateByOpponents(gameState, gameState.turn.currentPlayer, [6, 1, 8, 0.7, 1.5, 1.5])
-
+def defaultEvaluation(gameState, playerInd):
+    #return evaluateByOpponents(gameState, playerInd, [6, 1, 8, 0.4, 1.5, 1.5])
+    return heuristic(gameState, playerInd, [6,1,8,0.4,2,0.5])
 
 #the evaluation fed to H-Mnimax
 def evaluateByOpponents(gameState, playerIndex, weights):

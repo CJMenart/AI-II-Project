@@ -81,7 +81,8 @@ def skipToGoodPart(**kwargs):
     return game
 
 def simulateQuickGame():
-    game = skipToGoodPart()
+    #game = skipToGoodPart()
+    game = newGame()
     # If vp were a method of GameState rather than player, could do:
     # vps = map(game.vp, game.players)
     vps = [p.vp(game) for p in game.players]
