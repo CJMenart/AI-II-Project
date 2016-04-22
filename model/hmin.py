@@ -137,5 +137,12 @@ def hMinByDecision (gameState, depth, multithread = True):
         # value = sum(p*q for p,q in zip(values, weights))/36
         return (value, -1)
     else:
+        #debugging extraordinaire right here
+        for i in range(0, len(nextStates)):
+            s = nextStates[i]
+            points = [s.players[0].vp(s), s.players[1].vp(s), s.players[2].vp(s)]
+            totalCards = sum([s.players[0].nResources(),s.players[1].nResources(),s.players[2].nResources()])
+            print('State points: ', points, '# Cards: ', totalCards,', Heuristic: ', values[i])
+        
         bestChoiceInd = values.index(max(values))
         return(values[bestChoiceInd], nextStates[bestChoiceInd])

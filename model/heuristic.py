@@ -9,7 +9,7 @@ def asyncEval(gameState, array, index):
 #uses a default set of weights
 def defaultEvaluation(gameState, playerInd):
     #return evaluateByOpponents(gameState, playerInd, [6, 1, 8, 0.4, 1.5, 1.5])
-    return heuristic(gameState, playerInd, [6,1,8,0.4,2,0.5])
+    return heuristic(gameState, playerInd, [9,1,8,0.4,2,0.5])
 
 #the evaluation fed to H-Mnimax
 def evaluateByOpponents(gameState, playerIndex, weights):
@@ -109,5 +109,5 @@ def heuristic(gameState, playerIndex, weights):
                 min(res[ResourceType.GRAIN], 2)
 
     return (vp*weights[0] + resourceCount*weights[1] + riskOfRobber*weights[2] + expansionOpportunity*weights[3] + \
-                income*weights[4] + savings*weights[5])/sum(weights)           
+                income*weights[4] + savings*weights[5])           
 
