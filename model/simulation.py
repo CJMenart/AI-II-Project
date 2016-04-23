@@ -5,11 +5,11 @@ from hmin import *
 import random
 
 #CONSOLE VERSION
-def simulateTurn(gameState):
+def simulateTurn(gameState, weights = -1):
     if (gameState.turn.turnState == TurnState.DIE_ROLL):
         return simulateDieRoll(gameState)[0]
     else:
-        return simulateDecision(gameState, True)
+        return simulateDecision(gameState, True, weights)
 
 #GUI VERSION
 def simulateTurnExplain(gameState): # returns (new game state, what happened)
@@ -18,6 +18,7 @@ def simulateTurnExplain(gameState): # returns (new game state, what happened)
     else:
         ts = str(gameState.turn.turnState) + ', ' + str(gameState.turn.currentPlayer)
         return (simulateDecision(gameState, False), ts)
+
 
 def simulateDieRoll(gameState):
     states = gameState.getPossibleNextStates()
@@ -52,11 +53,11 @@ def simulateDieRoll(gameState):
     ## TODO: factor a roll-specific version out of gameState.getPossibleNextStates() to not waste time making and modifiying 9 extra gameState copies!
     return (states[stateIdx], (r1, r2))
 
-def simulateDecision(gameState, multithread):
+def simulateDecision(gameState, multithread, weights = -1):
     ## HMin functions return both heuristic evals and state. We take [1] because here we
     #only want state.
     print("Calling simulateDecision")
-    return hMinByDecision(gameState, 1, multithread)[1]
+    return hMinByDecision(gameState, 1, multithread, weights)[1]
 
 def skipToGoodPart(**kwargs):
     game = newGame(**kwargs)

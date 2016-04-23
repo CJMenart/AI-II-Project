@@ -16,3 +16,5 @@ class ShuffleBag(object):
     def shuffle(self):
         self.list = self.values[:]
         random.shuffle(self.list)
+    def __len__(self):
+        return len(self.values)

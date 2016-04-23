@@ -4,7 +4,7 @@ import time
 from multiprocessing import Pool
 from functools import partial
 
-#DEPRECATED (currently)
+#DEPRECATED (currently) DO NOT CALL
 #iterative-deepening H-Minimax
 #iteratively does H-Minimax at increasing depth until it starts
 #taking longer than the 'time limit', expressed in seconds
@@ -23,7 +23,7 @@ def IHM(gameState, timeLimit):
 
     return (hVal, newState)
 
-#DEPRECATED (currently)
+#DEPRECATED (currently) DO NOT CALL
 #does H-Minimax with alpha-beta pruning, optimizing to a given depth IN TURNS
 #returns (heuristic value for this state based on search, preferred next state)
 def hMinByTurn (gameState, targetTurn, multithread = True):
@@ -76,7 +76,7 @@ def hMinByTurn (gameState, targetTurn, multithread = True):
 
 #does H-Minimax with alpha-beta pruning, optimizing to the given depth
 #returns (heuristic value for this state based on search, preferred next state)
-def hMinByDecision (gameState, depth, multithread = True):
+def hMinByDecision (gameState, depth, multithread = True, hWeights = -1):
     #print("Starting hMin function.")
 
     nextStates = gameState.getPossibleNextStates()
@@ -94,14 +94,14 @@ def hMinByDecision (gameState, depth, multithread = True):
             print("About to pool.")
 
             nextVals = pool.map(partial(defaultEvaluation, \
-                            playerInd = gameState.turn.currentPlayer),\
+                            playerInd = gameState.turn.currentPlayer, weights = hWeights),\
                             nextStates[stateInd:min(len(nextStates), stateInd+poolSize)])
             values.extend(nextVals)
             stateInd += poolSize
         pool.close()
     elif depth == 1 and not multithread:
         for state in nextStates:
-            values.append(defaultEvaluation(state, gameState.turn.currentPlayer))
+            values.append(defaultEvaluation(state, gameState.turn.currentPlayer, hWeights))
         
     elif depth > 1 and multithread:
         pool = Pool(len(nextStates))

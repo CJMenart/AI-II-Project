@@ -3,13 +3,12 @@ from player import *
 
 #Code pertaining to the heuristic function for H-minimax
 
-def asyncEval(gameState, array, index):
-    array[index] = defaultEvaluation(gameState)
-
 #uses a default set of weights
-def defaultEvaluation(gameState, playerInd):
+def defaultEvaluation(gameState, playerInd, weights = -1):
+    if weights == -1: #default heuristic
+        weights = [9,1,8,0.4,2,0.5]
     #return evaluateByOpponents(gameState, playerInd, [6, 1, 8, 0.4, 1.5, 1.5])
-    return heuristic(gameState, playerInd, [9,1,8,0.4,2,0.5])
+    return heuristic(gameState, playerInd, weights)
 
 #the evaluation fed to H-Mnimax
 def evaluateByOpponents(gameState, playerIndex, weights):
