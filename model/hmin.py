@@ -4,6 +4,7 @@ import time
 from multiprocessing import Pool
 from functools import partial
 
+#DEPRECATED (currently)
 #iterative-deepening H-Minimax
 #iteratively does H-Minimax at increasing depth until it starts
 #taking longer than the 'time limit', expressed in seconds
@@ -22,6 +23,7 @@ def IHM(gameState, timeLimit):
 
     return (hVal, newState)
 
+#DEPRECATED (currently)
 #does H-Minimax with alpha-beta pruning, optimizing to a given depth IN TURNS
 #returns (heuristic value for this state based on search, preferred next state)
 def hMinByTurn (gameState, targetTurn, multithread = True):
@@ -91,14 +93,15 @@ def hMinByDecision (gameState, depth, multithread = True):
         #for state in nextStates:
             print("About to pool.")
 
-            nextVals = pool.map(defaultEvaluation, nextStates[stateInd:min(\
-                            len(nextStates), stateInd+poolSize)])
+            nextVals = pool.map(partial(defaultEvaluation, \
+                            playerInd = gameState.turn.currentPlayer),\
+                            nextStates[stateInd:min(len(nextStates), stateInd+poolSize)])
             values.extend(nextVals)
             stateInd += poolSize
         pool.close()
     elif depth == 1 and not multithread:
         for state in nextStates:
-            values.append(defaultEvaluation(state))
+            values.append(defaultEvaluation(state, gameState.turn.currentPlayer))
         
     elif depth > 1 and multithread:
         pool = Pool(len(nextStates))
@@ -134,5 +137,12 @@ def hMinByDecision (gameState, depth, multithread = True):
         # value = sum(p*q for p,q in zip(values, weights))/36
         return (value, -1)
     else:
+        #debugging extraordinaire right here
+        for i in range(0, len(nextStates)):
+            s = nextStates[i]
+            points = [s.players[0].vp(s), s.players[1].vp(s), s.players[2].vp(s)]
+            totalCards = sum([s.players[0].nResources(),s.players[1].nResources(),s.players[2].nResources()])
+            print('State points: ', points, '# Cards: ', totalCards,', Heuristic: ', values[i])
+        
         bestChoiceInd = values.index(max(values))
         return(values[bestChoiceInd], nextStates[bestChoiceInd])
