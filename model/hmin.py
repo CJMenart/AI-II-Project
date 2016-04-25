@@ -87,18 +87,17 @@ def hMinByDecision (gameState, depth, multithread = True, hWeights = -1):
     if depth == 1 and multithread:
         stateInd = 0
         poolSize = 50
-        pool = Pool(poolSize)
+        
         while (stateInd < len(nextStates)):
             
-        #for state in nextStates:
             print("About to pool.")
-
+            pool = Pool(poolSize)
             nextVals = pool.map(partial(defaultEvaluation, \
                             playerInd = gameState.turn.currentPlayer, weights = hWeights),\
                             nextStates[stateInd:min(len(nextStates), stateInd+poolSize)])
             values.extend(nextVals)
             stateInd += poolSize
-        pool.close()
+            pool.close()
     elif depth == 1 and not multithread:
         for state in nextStates:
             values.append(defaultEvaluation(state, gameState.turn.currentPlayer, hWeights))

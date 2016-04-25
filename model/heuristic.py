@@ -6,7 +6,7 @@ from player import *
 #uses a default set of weights
 def defaultEvaluation(gameState, playerInd, weights = -1):
     if weights == -1: #default heuristic
-        weights = [9,1,8,0.4,2,0.5]
+        weights = [9,0,8,0.4,2,0.5]
     #return evaluateByOpponents(gameState, playerInd, [6, 1, 8, 0.4, 1.5, 1.5])
     return heuristic(gameState, playerInd, weights)
 

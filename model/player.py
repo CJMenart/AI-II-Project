@@ -242,11 +242,15 @@ class Player:
         possibleNextStates.append(passTurn)
 
         #from there, we create states representing:
-        #can you trade 4 resources to the bank to get a resource of your choice?
-        stateIndex = 0
-        while stateIndex < len(possibleNextStates):
-            state = possibleNextStates[stateIndex]
-            for fromIndex in ResourceType:
+        #can you trade resources to the bank to get a resource of your choice?
+        #organized by resource--we make all wheat trades, then all brick trades across all
+        #states, etc.--so as to avoid redundancies which can become exponentially
+        #bothersome in the right situation
+        for fromIndex in ResourceType:
+            stateIndex = 0
+            while stateIndex < len(possibleNextStates):
+                state = possibleNextStates[stateIndex]
+            
                 tradeRate = self.bankTradeRate(fromIndex, gameState)
                 if state.getPlayerByIndex(self.playerId).resources[fromIndex] >= tradeRate:
                     #print("Trading ", fromIndex, " at trade rate ", tradeRate)
@@ -255,7 +259,7 @@ class Player:
                         traded.getPlayerByIndex(self.playerId).resources[fromIndex] -= tradeRate
                         traded.getPlayerByIndex(self.playerId).resources[toIndex] += 1
                         possibleNextStates.append(traded)
-            stateIndex += 1
+                stateIndex += 1
 
         #from there:
         #can you build a road?
@@ -271,7 +275,7 @@ class Player:
                     builtRoad = copy.deepcopy(state)
                     # appending road to state
                     builtRoad.roads.append(road.getRoadWithOwner(player.playerId))
-                    print('num roads in state: ', len(builtRoad.roads))
+                    #print('num roads in state: ', len(builtRoad.roads))
                     builtRoad.getPlayerByIndex(player.playerId).resources[ResourceType.BRICK] -= 1
                     builtRoad.getPlayerByIndex(player.playerId).resources[ResourceType.LUMBER] -= 1
                     # check if creates a longest road if so, update state
@@ -295,7 +299,7 @@ class Player:
             if player.resources[ResourceType.BRICK] >= 1 and \
                     player.resources[ResourceType.LUMBER] >= 1 and \
                     player.resources[ResourceType.WOOL] >= 1 and \
-                    player.resources[ResourceType.GRAIN] >= 1 and player.numBasicSettlements(gameState) < 5:
+                    player.resources[ResourceType.GRAIN] >= 1 and player.numBasicSettlements(state) < 5:
                 for settlement in player.availableSettlements(state):
                     builtSettlement = copy.deepcopy(state)
                     builtSettlement.settlements.append(settlement.getSettlementWithOwner(player.playerId))
@@ -313,10 +317,11 @@ class Player:
             player = state.getPlayerByIndex(self.playerId)
 
             if player.resources[ResourceType.GRAIN] >= 2 and \
-                        player.resources[ResourceType.ORE] >= 3 and player.numCities(gameState) < 4:
+                        player.resources[ResourceType.ORE] >= 3 and player.numCities(state) < 4:
                 for settlement in player.settlements(state):
                     if settlement.isCity == False:
                         builtCity = copy.deepcopy(state)
+                        print('Built City')
                         next(settlementToUpgrade for settlementToUpgrade in builtCity.settlements if \
                                  settlementToUpgrade == settlement).isCity = True
                         builtCity.getPlayerByIndex(self.playerId).resources[ResourceType.GRAIN] -= 2
