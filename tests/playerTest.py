@@ -332,6 +332,7 @@ ORE:0, ResourceType.LUMBER:0, ResourceType.GRAIN:0} )
         result = player.possibleLongestRoadLength(setupAddingRoad,\
                              setupExistingRoad)
         self.assertEqual(result, 3)
+
 '''
     def test_possibleLongestRoadLen_base_case(self):
         setupAddingRoad = Road(Point(1,1), Point(2,0), 1)

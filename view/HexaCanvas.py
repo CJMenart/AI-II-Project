@@ -383,8 +383,11 @@ class View:
                 self.board.delete(self.hand_text[i])
 
             p = game.players[i]
-            text = "id {0}\nWOOL: {1}\nBRICK: {2}\nORE: {3}\nLUMBER: {4}\nGRAIN: {5}".format(p.playerId, p.resources[ResourceType.WOOL], p.resources[ResourceType.BRICK], p.resources[ResourceType.ORE], p.resources[ResourceType.LUMBER], p.resources[ResourceType.GRAIN])
-            self.hand_text[i] = self.board.create_text(self.hand_positions[i], text=text)
+            text = "player Id: {0}\nWOOL: {1}\nBRICK: {2}\nORE: {3}\nLUMBER: {4}\nGRAIN: {5}\nVictory Point: {6}\nPlayer Color: {7}".format(p.playerId, p.resources[ResourceType.WOOL], p.resources[ResourceType.BRICK], p.resources[ResourceType.ORE], p.resources[ResourceType.LUMBER], p.resources[ResourceType.GRAIN], p.vp(game), self.playerColors[i])
+            if game.turn.currentPlayer == p.playerId: 
+                self.hand_text[i] = self.board.create_text(self.hand_positions[i], text=text, font = tkFont.Font(weight = 'bold'))
+            else: 
+                self.hand_text[i] = self.board.create_text(self.hand_positions[i], text=text, fill = "#112233")
 
         if self.explain_text:
             self.board.delete(self.explain_text)

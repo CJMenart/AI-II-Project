@@ -266,10 +266,11 @@ class Player:
                 for road in player.availableRoads(state):
                     builtRoad = copy.deepcopy(state)
                     # check if creates a longest road if so, update state
-                    #possLongerLength = self.possibleLongestRoadLength(road, player.roads(builtRoad)) 
-                    #if possLongerLength > 5 and \
-                    #        possLongerLength > buildRoad.longestRoadLenWithId[0]: 
-                    #    buildRoad.longestRoadLenWithId = [possLongerLength, player.playerId]
+                    possLongerLength = self.possibleLongestRoadLength(road, player.roads(builtRoad)) 
+                    if possLongerLength >= 5 and \
+                            possLongerLength > builtRoad.longestRoadLenWithId[0]: 
+                        builtRoad.longestRoadLenWithId = [possLongerLength, player.playerId]
+                        print('now player {} has claimed the longest road title with road length of {}'.format(builtRoad.longestRoadLenWithId[1], builtRoad.longestRoadLenWithId[0]) ) 
                     # appending road to state
                     builtRoad.roads.append(road.getRoadWithOwner(player.playerId))
                     builtRoad.getPlayerByIndex(builtRoad.turn.currentPlayer).resources[ResourceType.BRICK] -= 1
@@ -337,13 +338,14 @@ class Player:
         # recursive step
         if (len(adjExistingRoads) > 0): 
             possibleResult = []
-            for rd in adjExistingRoads: 
-                for s in Settlement.adjacentSettlementsByRoad(rd): 
-                    if addingRoad not in s.adjacentRoads(): 
-                        setDir = s 
-                        DFSresult = self.DFS(rd, [r for r in existingRoad if r != rd], setDir)
-                        DFSresult[1].append(rd)
-                        possibleResult.append(DFSresult)
+            for rd in adjExistingRoads:
+                setDir = next(s for s in Settlement.adjacentSettlementsByRoad(rd) if addingRoad not in s.adjacentRoads())
+                #for s in Settlement.adjacentSettlementsByRoad(rd): 
+                #    if addingRoad not in s.adjacentRoads(): 
+                #        setDir = s 
+                DFSresult = self.DFS(rd, [r for r in existingRoad if r != rd], setDir)
+                DFSresult[1].append(rd)
+                possibleResult.append(DFSresult)
             possibleResult.sort(key = lambda x: -x[0])
             longerPath = possibleResult[0]
             return [longerPath[0]+1, longerPath[1] ] 

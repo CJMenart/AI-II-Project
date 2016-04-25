@@ -15,6 +15,9 @@ class Road:
                     True if self.owner <0 or  other.owner < 0 \
                     else self.owner == other.owner)
 
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __str__(self):
         return ("adjHex1: {0}, adjHex2: {1}, owner: {2}".format(self.adjHex1, self.adjHex2, self.owner))
 

@@ -47,7 +47,7 @@ def heuristic(gameState, playerIndex, weights):
     resourceCount = player.numCards()
     
     #do you have too many resources? Be careful
-    riskOfRobber = 0 if resourceCount >= 8 else 1
+    riskOfRobber = 0 if resourceCount < 8 else 1
 
     #OLD VERSION:
     #we can also count the number of settlement-building opportunities we might have
