@@ -142,7 +142,7 @@ def hMinByDecision (gameState, depth, multithread = True, hWeights = -1):
             s = nextStates[i]
             points = [s.players[0].vp(s), s.players[1].vp(s), s.players[2].vp(s)]
             totalCards = sum([s.players[0].nResources(),s.players[1].nResources(),s.players[2].nResources()])
-            print('State points: ', points, '# Cards: ', totalCards,', Heuristic: ', values[i])
+            #print('State points: ', points, '# Cards: ', totalCards,', Heuristic: ', values[i])
         
         bestChoiceInd = values.index(max(values))
         return(values[bestChoiceInd], nextStates[bestChoiceInd])

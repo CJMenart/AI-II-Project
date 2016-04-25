@@ -53,8 +53,8 @@ class Road:
                     Road(twoClosePoints[1], self.adjHex1, -1), \
                     Road(twoClosePoints[1], self.adjHex2, -1)]
 
-    def getRoadWithOwner(self, id):
-        return Road(self.adjHex1, self.adjHex2, id)
+    def getRoadWithOwner(self, pl_id):
+        return Road(self.adjHex1, self.adjHex2, pl_id)
 
 
 
