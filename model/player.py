@@ -232,7 +232,7 @@ class Player:
     def buildSomething(self, gameState):
         possibleNextStates = []
 
-        print('build something')
+        #print('build something')
         
         #the first state represents doing nothing.
         passTurn = copy.deepcopy(gameState)
@@ -264,13 +264,13 @@ class Player:
         #from there:
         #can you build a road?
         stateIndex = 0
-        print('number of states going into road check: ', len(possibleNextStates))
+        #print('number of states going into road check: ', len(possibleNextStates))
         while stateIndex < len(possibleNextStates):
             state = possibleNextStates[stateIndex]
             player = state.getPlayerByIndex(self.playerId)
             if player.resources[ResourceType.BRICK] >= 1 and \
                    player.resources[ResourceType.LUMBER] >= 1:
-                print("num possible roads: ", len(player.availableRoads(state)))
+                #print("num possible roads: ", len(player.availableRoads(state)))
                 for road in player.availableRoads(state):
                     builtRoad = copy.deepcopy(state)
                     # appending road to state
@@ -283,12 +283,12 @@ class Player:
                     if possLongerLength >= 5 and \
                             possLongerLength > builtRoad.longestRoadLenWithId[0]: 
                         builtRoad.longestRoadLenWithId = [possLongerLength, player.playerId]
-                        print('now player {} has claimed the longest road title with road length of {}'.format(builtRoad.longestRoadLenWithId[1], builtRoad.longestRoadLenWithId[0]) ) 
+                        #print('now player {} has claimed the longest road title with road length of {}'.format(builtRoad.longestRoadLenWithId[1], builtRoad.longestRoadLenWithId[0]) ) 
                     
                     possibleNextStates.append(builtRoad)
             stateIndex += 1
 
-        print('number of states going out of road check: ', len(possibleNextStates))
+        #print('number of states going out of road check: ', len(possibleNextStates))
 
         #can you build a settlement?
         stateIndex = 0
@@ -321,7 +321,7 @@ class Player:
                 for settlement in player.settlements(state):
                     if settlement.isCity == False:
                         builtCity = copy.deepcopy(state)
-                        print('Built City')
+                        #print('Built City')
                         next(settlementToUpgrade for settlementToUpgrade in builtCity.settlements if \
                                  settlementToUpgrade == settlement).isCity = True
                         builtCity.getPlayerByIndex(self.playerId).resources[ResourceType.GRAIN] -= 2

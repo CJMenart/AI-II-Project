@@ -26,7 +26,7 @@ orientation_pointy = True
 debug_coordinates = True
 fake_roads = False
 fake_settlements = False
-skip_to_good_part = True
+skip_to_good_part = False
 
 # This class and 60% of its top 3 functions are from stackoverflow.
 # The remainder is original.
@@ -318,8 +318,8 @@ class View:
       gameExplain = simulateTurnExplain(self.game)
 
       self.game = gameExplain[0]
-      print("about to call first_time_view")
-      print("total number of roads: ",len(self.game.roads))
+      #print("about to call first_time_view")
+      #print("total number of roads: ",len(self.game.roads))
       self.first_time_view(*gameExplain)
 
   def first_time_view(self, game, *args):

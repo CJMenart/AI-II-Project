@@ -70,10 +70,10 @@ def heuristic(gameState, playerIndex, weights):
     openSettlements = list(set(player.openSettlementLocations(gameState)).difference(takenByOpponents))
     intersections = player.intersections(gameState)
 
-    print("Num of locations to examine: ", len(openSettlements))
-    print("With num intersections: ", len(intersections))
-    print("And owned roads: ", len(player.roads(gameState)))
-    print("And total raods: ", len(gameState.roads))
+    #print("Num of locations to examine: ", len(openSettlements))
+    #print("With num intersections: ", len(intersections))
+    #print("And owned roads: ", len(player.roads(gameState)))
+    #print("And total raods: ", len(gameState.roads))
     
     distances = [11]*len(openSettlements) #correspondance by index with openSettlements
 
@@ -94,7 +94,7 @@ def heuristic(gameState, playerIndex, weights):
         expansionOpportunity = expansionOpportunity + \
                         settlement.levelOfIncome(gameState)/(distances[sInd]+1)
 
-    print("expansionOpp: ", expansionOpportunity)
+    #print("expansionOpp: ", expansionOpportunity)
 
     #we will also count player income--counted in terms of 'pips'
     income = 0
